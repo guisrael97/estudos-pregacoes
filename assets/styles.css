@@ -762,6 +762,24 @@ select {
   grid-template-columns: 1fr;
 }
 
+.hero-study {
+  margin-bottom: 34px;
+}
+
+.hero-study + .toc {
+  margin-top: 0;
+}
+
+.hero-study .hero-subtitle {
+  max-width: 72ch;
+  font-size: 1.02rem;
+}
+
+.hero-study .hero-notes {
+  grid-template-columns: minmax(260px, 0.55fr);
+  margin-top: 22px;
+}
+
 .study-nav {
   display: flex;
   justify-content: space-between;

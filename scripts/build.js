@@ -488,11 +488,6 @@ function renderStudy(study, previous, next) {
     })
     .join("\n");
 
-  const notes = [
-    `<strong>Tese/resumo:</strong> ${escapeHtml(study.meta.summary)}`,
-    `<strong>Texto-base:</strong> ${escapeHtml(study.meta.baseText)}`,
-  ];
-
   return pageShell({
     title: `${study.meta.title} - ${formatDate(study.meta.date)}`,
     assetPrefix: "../../",
@@ -514,9 +509,9 @@ function renderStudy(study, previous, next) {
         <div class="hero-copy">
           <div class="card-eyebrow">Resumo de Estudo</div>
           <h1 class="hero-title">${escapeHtml(study.meta.title)}</h1>
-          <p class="hero-subtitle">${escapeHtml(study.meta.summary)}</p>
+          <p class="hero-subtitle"><strong>Tese/resumo:</strong> ${escapeHtml(study.meta.summary)}</p>
           <div class="hero-notes">
-            ${notes.map((note) => `<div class="hero-note">${note}</div>`).join("")}
+            <div class="hero-note"><strong>Texto-base:</strong> ${escapeHtml(study.meta.baseText)}</div>
           </div>
           <div class="hero-tags">
             ${study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}
