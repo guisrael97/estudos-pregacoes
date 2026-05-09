@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../../assets/styles.css?v=2026-05-09-v8" />
+  <link rel="stylesheet" href="../../assets/styles.css?v=2026-05-09-v9" />
 </head>
 <body>
   <div class="page-glow page-glow-a"></div>
@@ -503,7 +503,7 @@ function parseBibleReference(ref, book) {
   return {
     code,
     chapter: Number(detail[1]),
-    startVerse: detail[2] ? Number(detail[2]) : 1,
+    startVerse: detail[2] ? Number(detail[2]) : null,
     endVerse: detail[3] ? Number(detail[3]) : null
   };
 }
@@ -526,12 +526,14 @@ async function renderBibleText(ref, book) {
   const chapter = bibleBook.chapters[parsed.chapter - 1];
   if (!chapter) throw new Error("Capitulo nao encontrado");
 
-  const endVerse = parsed.endVerse || parsed.startVerse;
-  const verses = chapter.slice(parsed.startVerse - 1, endVerse);
+  const startV = parsed.startVerse || 1;
+  const endV = parsed.startVerse ? (parsed.endVerse || parsed.startVerse) : chapter.length;
+  
+  const verses = chapter.slice(startV - 1, endV);
   if (!verses.length) throw new Error("Versiculo nao encontrado");
 
   return verses
-    .map((text, index) => "<p><strong>" + (parsed.startVerse + index) + "</strong> " + escapeText(text) + "</p>")
+    .map((text, index) => "<p><strong>" + (startV + index) + "</strong> " + escapeText(text) + "</p>")
     .join("");
 }
 

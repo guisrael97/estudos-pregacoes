@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v8";
+const assetVersion = "2026-05-09-v9";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -708,7 +708,7 @@ function parseBibleReference(ref, book) {
   return {
     code,
     chapter: Number(detail[1]),
-    startVerse: detail[2] ? Number(detail[2]) : 1,
+    startVerse: detail[2] ? Number(detail[2]) : null,
     endVerse: detail[3] ? Number(detail[3]) : null
   };
 }
@@ -731,12 +731,14 @@ async function renderBibleText(ref, book) {
   const chapter = bibleBook.chapters[parsed.chapter - 1];
   if (!chapter) throw new Error("Capitulo nao encontrado");
 
-  const endVerse = parsed.endVerse || parsed.startVerse;
-  const verses = chapter.slice(parsed.startVerse - 1, endVerse);
+  const startV = parsed.startVerse || 1;
+  const endV = parsed.startVerse ? (parsed.endVerse || parsed.startVerse) : chapter.length;
+  
+  const verses = chapter.slice(startV - 1, endV);
   if (!verses.length) throw new Error("Versiculo nao encontrado");
 
   return verses
-    .map((text, index) => "<p><strong>" + (parsed.startVerse + index) + "</strong> " + escapeText(text) + "</p>")
+    .map((text, index) => "<p><strong>" + (startV + index) + "</strong> " + escapeText(text) + "</p>")
     .join("");
 }
 
