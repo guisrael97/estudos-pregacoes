@@ -766,6 +766,10 @@ select {
   margin-bottom: 36px;
 }
 
+.hero-study + .toc {
+  margin-top: 36px !important;
+}
+
 .hero-study .hero-subtitle {
   max-width: 72ch;
   font-size: 1.02rem;
