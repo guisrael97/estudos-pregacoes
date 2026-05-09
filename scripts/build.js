@@ -1,4 +1,4 @@
-﻿const fs = require("node:fs");
+const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
@@ -237,7 +237,7 @@ function linesToListItems(lines) {
 }
 
 function renderList(items) {
-  if (!items.length) return '<p class="muted">â€”</p>';
+  if (!items.length) return '<p class="muted">—</p>';
   return `<ul class="list">${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 }
 
@@ -264,11 +264,11 @@ function renderReferencesSection(section) {
       </div>`;
   });
 
-  if (!groups.some((group) => stripHeadingNumber(group.title).toLowerCase() === "implÃ­citas" || stripHeadingNumber(group.title).toLowerCase() === "implicitas")) {
+  if (!groups.some((group) => stripHeadingNumber(group.title).toLowerCase() === "implícitas" || stripHeadingNumber(group.title).toLowerCase() === "implicitas")) {
     cards.push(`
       <div class="mini-card">
-        <div class="mini-label">ImplÃ­citas</div>
-        <p class="muted">â€”</p>
+        <div class="mini-label">Implícitas</div>
+        <p class="muted">—</p>
       </div>`);
   }
 
@@ -298,10 +298,10 @@ function renderMapSection(section) {
         .map((point, index) => {
           const title = stripHeadingNumber(point.title).replace(/^Ponto\s+\d+:\s*/i, "");
           let lines = point.content.map((line) => line.trim()).filter(Boolean);
-          const anchorResult = extractLabelValue(lines, /^\*\*Ã‚ncora bÃ­blica:\*\*\s*/i);
+          const anchorResult = extractLabelValue(lines, /^\*\*Âncora bíblica:\*\*\s*/i);
           lines = anchorResult.lines;
           const keyResult = extractLabelValue(lines, /^\*\*Frase-chave:\*\*\s*/i);
-          lines = keyResult.lines.filter((line) => !/^Uma frase forte da pregaÃ§Ã£o foi:?$/i.test(line));
+          lines = keyResult.lines.filter((line) => !/^Uma frase forte da pregação foi:?$/i.test(line));
           const teaching = markdownToHtml(lines.join("\n").trim());
 
           return `
@@ -311,8 +311,8 @@ function renderMapSection(section) {
               <div class="mapa-grid">
                 <div class="mini-card">
                   <div class="mini-label">Ã‚ncora</div>
-                  <div class="mini-text">${anchorResult.value || "â€”"}</div>
-                </div>
+                  <div class="mini-label">Âncora</div>
+                  <div class="mini-text">${anchorResult.value || "—"}</div>
                 <div class="mini-card">
                   <div class="mini-label">Frase-chave</div>
                   <div class="mini-text">${keyResult.value || "â€”"}</div>
@@ -320,7 +320,7 @@ function renderMapSection(section) {
               </div>
               <div class="mini-card teaching">
                 <div class="mini-label">Ensino</div>
-                <div class="mini-text">${teaching || "â€”"}</div>
+                <div class="mini-text">${teaching || "—"}</div>
               </div>
             </article>`;
         })
@@ -347,7 +347,7 @@ function renderReadingsSection(section) {
 function renderSectionContent(section) {
   const title = stripHeadingNumber(section.title).toLowerCase();
 
-  if (title.includes("referÃªncias bÃ­blicas") || title.includes("referencias biblicas")) {
+  if (title.includes("referências bíblicas") || title.includes("referencias biblicas")) {
     return renderReferencesSection(section);
   }
 
@@ -355,7 +355,7 @@ function renderSectionContent(section) {
     return renderFlowSection(section);
   }
 
-  if (title.includes("mapa bÃ­blia") || title.includes("mapa biblia")) {
+  if (title.includes("mapa bíblia") || title.includes("mapa biblia")) {
     return renderMapSection(section);
   }
 
@@ -363,7 +363,7 @@ function renderSectionContent(section) {
     return renderReadingsSection(section);
   }
 
-  return `<div class="prose${title.includes("tese central") || title.includes("oraÃ§Ã£o") || title.includes("oracao") ? " lead" : ""} study-content">
+  return `<div class="prose${title.includes("tese central") || title.includes("oração") || title.includes("oracao") ? " lead" : ""} study-content">
     ${markdownToHtml(section.content.join("\n").trim())}
   </div>`;
 }
@@ -372,8 +372,8 @@ function sectionClassFor(section, index) {
   const title = stripHeadingNumber(section.title).toLowerCase();
   const classes = ["section"];
   if (index === 0) classes.push("section-anchor");
-  if (title.includes("tese central") || title.includes("oraÃ§Ã£o") || title.includes("oracao")) classes.push("section-thesis");
-  if (title.includes("aplicaÃ§Ãµes") || title.includes("aplicacoes") || title.includes("aÃ§Ãµes prÃ¡ticas") || title.includes("acoes praticas")) classes.push("section-action");
+  if (title.includes("tese central") || title.includes("oração") || title.includes("oracao")) classes.push("section-thesis");
+  if (title.includes("aplicações") || title.includes("aplicacoes") || title.includes("ações práticas") || title.includes("acoes praticas")) classes.push("section-action");
   return classes.join(" ");
 }
 
