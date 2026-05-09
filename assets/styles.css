@@ -544,6 +544,7 @@ select {
 .toc-title {
   font-size: 1.15rem;
   font-weight: 800;
+  margin-bottom: 12px;
 }
 
 .toc-grid {

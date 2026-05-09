@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-spacing-2";
+const assetVersion = "2026-05-09-nav-refs-1";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -671,6 +671,8 @@ const bookMap = {
   "Romanos": "Romans",
   "Galatas": "Galatians",
   "Gálatas": "Galatians",
+  "Isaias": "Isaiah",
+  "Isaías": "Isaiah",
   "Filipenses": "Philippians",
   "Salmo": "Psalms",
   "Lucas": "Luke",
@@ -695,7 +697,11 @@ const localBible = {
   "Galatas 2:20": "<p><strong>20</strong> Fui crucificado com Cristo. Assim, ja nao sou eu quem vive, mas Cristo vive em mim.</p>",
   "1 Pedro 1:6-9": "<p><strong>7</strong> Assim acontece para que fique comprovado que a fe que voces tem redundara em louvor, gloria e honra na revelacao de Jesus Cristo.</p>",
   "Romanos 12:1-2": "<p><strong>1</strong> Oferecam-se em sacrificio vivo, santo e agradavel a Deus. <strong>2</strong> Nao se amoldem ao padrao deste mundo, mas transformem-se pela renovacao da sua mente.</p>",
-  "Lucas 9:23": "<p><strong>23</strong> Se alguem quiser acompanhar-me, negue-se a si mesmo, tome diariamente a sua cruz e siga-me.</p>"
+  "Lucas 9:23": "<p><strong>23</strong> Se alguem quiser acompanhar-me, negue-se a si mesmo, tome diariamente a sua cruz e siga-me.</p>",
+  "Isaias 55": "<p><strong>Isaías 55</strong> Convite para buscar o Senhor, receber sua graça e voltar-se para seus caminhos. O capítulo chama o povo a deixar a autossuficiência, ouvir a Palavra e confiar que os pensamentos e caminhos de Deus são mais altos.</p>",
+  "Filipenses 3": "<p><strong>Filipenses 3</strong> Paulo apresenta Cristo como ganho supremo, rejeita a confiança na própria justiça e aponta para uma vida que prossegue para o alvo da soberana vocação de Deus em Cristo Jesus.</p>",
+  "Romanos 12": "<p><strong>Romanos 12</strong> Chamado a oferecer a vida como sacrifício vivo, renovar a mente e viver uma fé prática, humilde, amorosa e transformada.</p>",
+  "Salmo 27": "<p><strong>Salmo 27</strong> Declaração de confiança no Senhor como luz e salvação, com desejo profundo de habitar em sua presença e esperar com coragem pelo seu cuidado.</p>"
 };
 
 function normalizeReference(ref) {
@@ -707,8 +713,9 @@ function normalizeReference(ref) {
 }
 
 document.querySelectorAll(".study-content li, .study-content p, .refs-grid li, .mini-text").forEach((el) => {
-  el.innerHTML = el.innerHTML.replace(/\\b((?:[1-3]\\s)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?/g, (match, book) => {
-    if (!bookMap[book] && !bookMap[book.replace(/\\s+/g, " ")]) return match;
+  el.innerHTML = el.innerHTML.replace(/\\b((?:[1-3]\\s)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+(?:\\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+)?)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?/g, (match, book) => {
+    const normalizedBook = normalizeReference(book.replace(/\\s+/g, " "));
+    if (!bookMap[book] && !bookMap[book.replace(/\\s+/g, " ")] && !bookMap[normalizedBook]) return match;
     return '<span class="ref-link" data-ref="' + match + '" data-book="' + book + '">' + match + '</span>';
   });
 });
@@ -725,7 +732,7 @@ document.addEventListener("click", async (event) => {
 
   const ref = link.dataset.ref.trim();
   const book = link.dataset.book.trim();
-  const englishBook = bookMap[book] || bookMap[book.replace(/\\s+/g, " ")] || book;
+  const englishBook = bookMap[book] || bookMap[book.replace(/\\s+/g, " ")] || bookMap[normalizeReference(book)] || book;
   const query = encodeURIComponent(ref.replace(book, englishBook));
 
   modalTitle.textContent = ref;
