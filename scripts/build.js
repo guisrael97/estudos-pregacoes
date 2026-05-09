@@ -310,12 +310,12 @@ function renderMapSection(section) {
               <h3>${escapeHtml(title)}</h3>
               <div class="mapa-grid">
                 <div class="mini-card">
-                  <div class="mini-label">Ã‚ncora</div>
                   <div class="mini-label">Âncora</div>
                   <div class="mini-text">${anchorResult.value || "—"}</div>
+                </div>
                 <div class="mini-card">
                   <div class="mini-label">Frase-chave</div>
-                  <div class="mini-text">${keyResult.value || "â€”"}</div>
+                  <div class="mini-text">${keyResult.value || "—"}</div>
                 </div>
               </div>
               <div class="mini-card teaching">
