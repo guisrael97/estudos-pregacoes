@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v6";
+const assetVersion = "2026-05-09-v7";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -661,23 +661,30 @@ function normalizeReference(ref) {
     .normalize("NFD")
     .replace(/[\\u0300-\\u036f]/g, "");
 }
-const bibleBookCodes = {
-  "apocalipse": "re",
-  "mateus": "mt",
-  "joao": "jo",
-  "hebreus": "hb",
-  "tiago": "jm",
-  "romanos": "rm",
-  "galatas": "gl",
-  "isaias": "is",
-  "filipenses": "ph",
-  "salmo": "ps",
-  "salmos": "ps",
-  "lucas": "lk",
-  "1 joao": "1jo",
-  "1 pedro": "1pe",
-  "2 corintios": "2co"
-};
+      const bibleBookCodes = {
+        "genesis": "gn", "gn": "gn", "exodo": "ex", "ex": "ex", "levitico": "lv", "lv": "lv",
+        "numeros": "nm", "nm": "nm", "deuteronomio": "dt", "dt": "dt", "josue": "js", "js": "js",
+        "juizes": "jd", "jz": "jd", "rute": "rt", "rt": "rt", "1 samuel": "1sm", "1sm": "1sm",
+        "2 samuel": "2sm", "2sm": "2sm", "1 reis": "1kgs", "1rg": "1kgs", "2 reis": "2kgs", "2rg": "2kgs",
+        "1 cronicas": "1ch", "1cr": "1ch", "2 cronicas": "2ch", "2cr": "2ch", "esdras": "ezr", "ez": "ezr",
+        "neemias": "ne", "ne": "ne", "ester": "et", "et": "et", "jo": "job", "salmos": "ps", "salmo": "ps", "sl": "ps",
+        "proverbios": "prv", "pv": "prv", "eclesiastes": "ec", "ec": "ec", "cantares": "so", "ct": "so",
+        "isaias": "is", "is": "is", "jeremias": "jr", "jr": "jr", "lamentacoes": "lm", "lm": "lm",
+        "ezequiel": "ez", "eze": "ez", "daniel": "dn", "dn": "dn", "oseias": "ho", "os": "ho",
+        "joel": "jl", "jl": "jl", "amos": "am", "am": "am", "obadias": "ob", "ob": "ob",
+        "jonas": "jn", "jon": "jn", "miqueias": "mi", "mq": "mi", "naum": "na", "na": "na",
+        "habacuque": "hk", "hc": "hk", "sofonias": "zp", "sf": "zp", "ageu": "hg", "ag": "hg",
+        "zacarias": "zc", "zc": "zc", "malaquias": "ml", "ml": "ml", "mateus": "mt", "mt": "mt",
+        "marcos": "mk", "mc": "mk", "lucas": "lk", "lc": "lk", "joao": "jo", "atos": "act", "at": "act",
+        "romanos": "rm", "rm": "rm", "1 corintios": "1co", "1co": "1co", "2 corintios": "2co", "2co": "2co",
+        "galatas": "gl", "gl": "gl", "efesios": "eph", "ef": "eph", "filipenses": "ph", "fp": "ph",
+        "colossenses": "cl", "cl": "cl", "1 tessalonicenses": "1ts", "1ts": "1ts",
+        "2 tessalonicenses": "2ts", "2ts": "2ts", "1 timoteo": "1tm", "1tm": "1tm",
+        "2 timoteo": "2tm", "2tm": "2tm", "tito": "tt", "tt": "tt", "filemon": "phm", "fm": "phm",
+        "hebreus": "hb", "hb": "hb", "tiago": "jm", "tg": "jm", "1 pedro": "1pe", "1pe": "1pe",
+        "2 pedro": "2pe", "2pe": "2pe", "1 joao": "1jo", "1jo": "1jo", "2 joao": "2jo", "2jo": "2jo",
+        "3 joao": "3jo", "3jo": "3jo", "judas": "jud", "jd": "jud", "apocalipse": "re", "ap": "re"
+      };
 
 const bibleCache = new Map();
 
