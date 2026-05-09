@@ -8,12 +8,7 @@ A proposta é ajudar a igreja a revisitar a mensagem, meditar na Palavra e trans
 
 ## Frase de posicionamento
 
-> **Sobre Mesa**  
-> Depois da Palavra servida, vem o tempo de saborear, meditar e viver.
-
-## Versão curta
-
-**Sobre Mesa** é a “sobremesa” espiritual da semana: um estudo prático para continuar vivendo aquilo que foi servido na A Mesa.
+>**Sobre Mesa** é a “sobremesa” espiritual da semana: um estudo prático para continuar vivendo aquilo que foi servido na A >Mesa.
 
 ## O que o app entrega
 
@@ -25,7 +20,6 @@ A proposta é ajudar a igreja a revisitar a mensagem, meditar na Palavra e trans
 - Perguntas de reflexão
 - Oração guiada
 - Desafios da semana
-- Espaço para anotações pessoais
 
 ## Para quem é
 
