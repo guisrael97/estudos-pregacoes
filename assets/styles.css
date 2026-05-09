@@ -307,7 +307,7 @@ select {
 .hero-subtitle {
   color: var(--muted);
   font-size: clamp(1.1rem, 2vw, 1.35rem);
-  max-width: 720px;
+  max-width: 900px;
   margin-bottom: 36px;
   margin-top: 0;
 }
@@ -328,7 +328,7 @@ select {
 }
 
 .hero-subtitle {
-  max-width: 62ch;
+  max-width: 85ch;
   margin: 16px 0 0;
   color: var(--muted);
   font-size: 1.02rem;
@@ -773,7 +773,7 @@ select {
 }
 
 .hero-study .hero-subtitle {
-  max-width: 72ch;
+  max-width: 90ch;
   font-size: 1.02rem;
 }
 

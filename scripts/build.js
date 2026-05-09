@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v3";
+const assetVersion = "2026-05-09-v4";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
