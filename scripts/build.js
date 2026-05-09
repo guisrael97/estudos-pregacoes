@@ -5,6 +5,79 @@ const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
 const assetVersion = "2026-05-09-v12";
+const bibleBookNames = [
+  "1 Samuel",
+  "2 Samuel",
+  "1 Reis",
+  "2 Reis",
+  "1 Crônicas",
+  "2 Crônicas",
+  "1 Coríntios",
+  "2 Coríntios",
+  "1 Tessalonicenses",
+  "2 Tessalonicenses",
+  "1 Timóteo",
+  "2 Timóteo",
+  "1 Pedro",
+  "2 Pedro",
+  "1 João",
+  "2 João",
+  "3 João",
+  "Gênesis",
+  "Êxodo",
+  "Levítico",
+  "Números",
+  "Deuteronômio",
+  "Josué",
+  "Juízes",
+  "Rute",
+  "Esdras",
+  "Neemias",
+  "Ester",
+  "Jó",
+  "Salmos",
+  "Salmo",
+  "Provérbios",
+  "Eclesiastes",
+  "Cantares",
+  "Isaías",
+  "Jeremias",
+  "Lamentações",
+  "Ezequiel",
+  "Daniel",
+  "Oseias",
+  "Joel",
+  "Amós",
+  "Obadias",
+  "Jonas",
+  "Miqueias",
+  "Naum",
+  "Habacuque",
+  "Sofonias",
+  "Ageu",
+  "Zacarias",
+  "Malaquias",
+  "Mateus",
+  "Marcos",
+  "Lucas",
+  "João",
+  "Atos",
+  "Romanos",
+  "Gálatas",
+  "Efésios",
+  "Filipenses",
+  "Colossenses",
+  "Tito",
+  "Filemom",
+  "Hebreus",
+  "Tiago",
+  "Judas",
+  "Apocalipse",
+];
+const bibleBookPattern = bibleBookNames
+  .sort((a, b) => b.length - a.length)
+  .map((book) => book.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"))
+  .join("|");
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -211,7 +284,55 @@ function inlineMarkdown(text) {
   escaped = escaped.replace(/\*(.+?)\*/g, "<em>$1</em>");
   escaped = escaped.replace(/`(.+?)`/g, "<code>$1</code>");
   escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-  return escaped;
+  return linkBibleReferences(escaped);
+}
+
+function linkBibleReferences(html) {
+  let contextBook = "";
+  let contextChapter = "";
+  let lastWasVerse = false;
+
+  return html
+    .split(/(<[^>]+>)/g)
+    .map((part) => {
+      if (!part || part.startsWith("<")) return part;
+
+      return part.replace(
+        new RegExp(`(?<![\\p{L}\\d])(${bibleBookPattern})\\s+(\\d+(?::\\d+(?:-\\d+)?)?)|((?:\\s+(?:e|,|;)\\s*|\\s*[,;]\\s*)(\\d+(?::\\d+(?:-\\d+)?)?))`, "giu"),
+        (match, book, detail, continuation, continuationDetail) => {
+          if (book && detail) {
+            contextBook = normalizeBookLabel(book);
+            contextChapter = detail.split(":")[0];
+            lastWasVerse = detail.includes(":");
+            return bibleReferenceMarkup(`${contextBook} ${detail}`, contextBook, match);
+          }
+
+          if (continuation && contextBook) {
+            const separator = match.slice(0, match.indexOf(continuationDetail));
+            let ref;
+            if (lastWasVerse && !continuationDetail.includes(":")) {
+              ref = `${contextBook} ${contextChapter}:${continuationDetail}`;
+            } else {
+              ref = `${contextBook} ${continuationDetail}`;
+              contextChapter = continuationDetail.split(":")[0];
+              lastWasVerse = continuationDetail.includes(":");
+            }
+            return `${separator}${bibleReferenceMarkup(ref, contextBook, continuationDetail)}`;
+          }
+
+          return match;
+        }
+      );
+    })
+    .join("");
+}
+
+function normalizeBookLabel(book) {
+  return book.replace(/\s+/g, " ").trim();
+}
+
+function bibleReferenceMarkup(ref, book, label) {
+  return `<span class="ref-link" data-ref="${attr(ref)}" data-book="${attr(book)}">${label}</span>`;
 }
 
 function stripHeadingNumber(title) {
@@ -781,42 +902,6 @@ async function renderBibleText(ref, book) {
     .join("");
 }
 
-document.querySelectorAll(".study-content li, .study-content p, .refs-grid li, .mini-text").forEach((el) => {
-  let contextBook = "";
-  let contextChapter = "";
-  let lastWasVerse = false;
-
-  el.innerHTML = el.innerHTML.replace(
-    /(\\b(?:[1-3]\\s*)?\\p{Lu}\\p{L}+(?:\\s+\\p{Lu}\\p{L}+)?\\s+\\d+(?::\\d+(?:-\\d+)?)?)|((?:\\s+(?:e|,|;)\\s*|\\s*[,;]\\s*)(\\d+(?::\\d+(?:-\\d+)?)?))/gu,
-    (match, full, cont, cPart) => {
-      if (full) {
-        const parts = full.match(/^((?:[1-3]\\s*)?\\p{Lu}\\p{L}+(?:\\s+\\p{Lu}\\p{L}+)?)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?$/u);
-        if (!parts) return match;
-        const book = parts[1];
-        if (!bookCode(book)) {
-          contextBook = "";
-          return match;
-        }
-        contextBook = book;
-        contextChapter = parts[2];
-        lastWasVerse = !!parts[3];
-        return '<span class="ref-link" data-ref="' + full + '" data-book="' + book + '">' + full + '</span>';
-      } else if (cont && contextBook) {
-        const sep = match.slice(0, match.indexOf(cPart));
-        let ref;
-        if (lastWasVerse && !cPart.includes(":")) {
-          ref = contextBook + " " + contextChapter + ":" + cPart;
-        } else {
-          ref = contextBook + " " + cPart;
-          contextChapter = cPart.split(":")[0];
-          lastWasVerse = cPart.includes(":");
-        }
-        return sep + '<span class="ref-link" data-ref="' + ref + '" data-book="' + contextBook + '">' + cPart + '</span>';
-      }
-      return match;
-    }
-  );
-});
 document.addEventListener("click", async (event) => {
   const close = event.target.closest("[data-bible-close]");
   if (close) {
