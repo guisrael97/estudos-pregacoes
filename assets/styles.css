@@ -170,6 +170,19 @@ select {
   text-transform: uppercase;
 }
 
+.about-trigger {
+  cursor: pointer;
+  color: var(--text);
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.about-trigger:hover,
+.about-trigger:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--accent-soft);
+  color: #fff3e9;
+}
+
 .badge,
 .pill,
 .date-chip {
@@ -335,6 +348,13 @@ select {
   line-height: 1.1;
   letter-spacing: -0.03em;
   font-weight: 800;
+}
+
+.hero-title-brand {
+  color: transparent;
+  background: linear-gradient(90deg, var(--accent-strong), var(--accent), var(--mint));
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
 .hero-subtitle {
@@ -849,6 +869,10 @@ select {
   padding: 24px;
 }
 
+.about-modal-content {
+  max-width: 760px;
+}
+
 .bible-modal-header {
   display: flex;
   justify-content: space-between;
@@ -868,6 +892,25 @@ select {
 #bible-modal-body {
   overflow-y: auto;
   padding-right: 8px;
+}
+
+.about-modal-body {
+  color: var(--muted);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.about-modal-body p {
+  margin: 0 0 1rem;
+}
+
+.about-modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+.about-modal-body .about-quote {
+  color: var(--text);
+  font-weight: 800;
 }
 
 .filter-grid {

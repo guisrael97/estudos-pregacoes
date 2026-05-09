@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v12";
+const assetVersion = "2026-05-09-v14";
 const bibleBookNames = [
   "1 Samuel",
   "2 Samuel",
@@ -553,12 +553,13 @@ function renderIndex(studies) {
       <div class="topbar">
         <div class="brand">
           <a href="index.html" class="brand-link">SOBRE MESA</a>
+          <button class="pill about-trigger" type="button" data-about-open>Sobre N&oacute;s</button>
         </div>
       </div>
 
       <header class="hero hero-index">
         <div class="hero-copy">
-          <h1 class="hero-title">SOBRE MESA</h1>
+          <h1 class="hero-title hero-title-brand">SOBRE MESA</h1>
           <p class="hero-subtitle">A &ldquo;sobremesa&rdquo; espiritual da semana: um espa&ccedil;o para saborear, meditar e viver, ao longo dos dias, a Palavra servida &Agrave; Mesa.</p>
           <div class="hero-notes">
             <div class="hero-note"><strong>Total:</strong> ${studies.length} estudo${studies.length === 1 ? "" : "s"} publicado${studies.length === 1 ? "" : "s"}.</div>
@@ -607,8 +608,33 @@ function renderIndex(studies) {
       <main class="summary-grid" data-study-list>
         ${studyCards || '<div class="card empty-state">Nenhum estudo cadastrado ainda.</div>'}
       </main>
+      ${aboutModal()}
       <script>${indexScript()}</script>`,
   });
+}
+
+function aboutModal() {
+  return `
+      <div id="about-modal" class="bible-modal" hidden>
+        <div class="bible-modal-overlay" data-about-close></div>
+        <div class="bible-modal-content about-modal-content card" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
+          <div class="bible-modal-header">
+            <h3 id="about-modal-title">Sobre N&oacute;s</h3>
+            <button class="btn btn-ghost" type="button" data-about-close>Fechar</button>
+          </div>
+          <div class="about-modal-body">
+            <p>O Sobre Mesa nasceu com um desejo simples: ajudar a igreja a n&atilde;o apenas ouvir a Palavra, mas viver aquilo que tem sido pregado.</p>
+            <p>A cada culto, uma mensagem &eacute; servida. Deus fala, confronta, consola, ensina e direciona. Mas a prega&ccedil;&atilde;o n&atilde;o deve terminar quando o culto acaba. Ela pode, e deve, continuar sendo meditada durante a semana, aplicada nas decis&otilde;es, lembrada nas conversas, praticada no secreto e transformada em obedi&ecirc;ncia no dia a dia.</p>
+            <p>Por isso, o Sobre Mesa transforma as prega&ccedil;&otilde;es da igreja A Mesa em estudos pr&aacute;ticos, devocionais e aplic&aacute;veis para a semana.</p>
+            <p>Aqui, cada mensagem &eacute; organizada em um formato simples e profundo, com resumo da prega&ccedil;&atilde;o, texto-base b&iacute;blico, refer&ecirc;ncias, pontos centrais, aplica&ccedil;&otilde;es pr&aacute;ticas, perguntas de reflex&atilde;o, ora&ccedil;&atilde;o guiada e desafios da semana.</p>
+            <p>O nome carrega essa ideia:</p>
+            <p class="about-quote">&quot;Depois da Palavra servida, vem o tempo de saborear, meditar e viver.&quot;</p>
+            <p>O Sobre Mesa &eacute; a &ldquo;sobremesa&rdquo; espiritual da semana: um espa&ccedil;o para continuar vivendo aquilo que foi servido A Mesa.</p>
+            <p>Mais do que uma biblioteca de prega&ccedil;&otilde;es, este app &eacute; uma ferramenta de pr&aacute;tica, reflex&atilde;o e amadurecimento espiritual. Ele existe para qualquer pessoa que deseja sair da posi&ccedil;&atilde;o de apenas ouvinte para come&ccedil;ar a viver, de forma concreta, aquilo que Deus tem falado.</p>
+            <p>Porque a Palavra n&atilde;o foi feita apenas para ser escutada. Foi feita para formar, transformar e gerar fruto.</p>
+          </div>
+        </div>
+      </div>`;
 }
 
 function renderStudy(study, previous, next) {
@@ -736,6 +762,9 @@ const month = document.querySelector("[data-month]");
 const order = document.querySelector("[data-order]");
 const list = document.querySelector("[data-study-list]");
 const cards = Array.from(document.querySelectorAll("[data-study-card]"));
+const aboutModal = document.getElementById("about-modal");
+const aboutOpen = document.querySelector("[data-about-open]");
+const aboutCloseControls = Array.from(document.querySelectorAll("[data-about-close]"));
 
 function applyFilters() {
   const query = (search.value || "").toLowerCase();
@@ -774,6 +803,24 @@ function applyFilters() {
 
 [search, type, year, month, order].forEach((control) => control.addEventListener("input", applyFilters));
 applyFilters();
+
+function openAboutModal() {
+  aboutModal.hidden = false;
+  aboutModal.querySelector("[data-about-close]").focus();
+}
+
+function closeAboutModal() {
+  aboutModal.hidden = true;
+  aboutOpen.focus();
+}
+
+aboutOpen.addEventListener("click", openAboutModal);
+aboutCloseControls.forEach((control) => control.addEventListener("click", closeAboutModal));
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !aboutModal.hidden) {
+    closeAboutModal();
+  }
+});
 `;
 }
 
