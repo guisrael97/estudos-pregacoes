@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v5";
+const assetVersion = "2026-05-09-v6";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -505,7 +505,7 @@ function renderStudy(study, previous, next) {
         <div class="hero-copy">
           <div class="card-eyebrow">Resumo de Estudo</div>
           <h1 class="hero-title">${escapeHtml(study.meta.title)}</h1>
-          <p class="hero-subtitle"><strong>Tese/resumo:</strong> ${escapeHtml(study.meta.summary)}</p>
+          <p class="hero-subtitle">${escapeHtml(study.meta.summary)}</p>
           <div class="hero-tags">
             ${study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}
           </div>
