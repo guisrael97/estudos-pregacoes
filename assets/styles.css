@@ -223,7 +223,7 @@ select {
   grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.9fr);
   gap: 18px;
   margin-top: 22px;
-  margin-bottom: 24px;
+  margin-bottom: 40px;
 }
 
 .hero-copy,
@@ -401,6 +401,7 @@ select {
 .filter-card,
 .toc {
   background: var(--surface-tint);
+  margin-top: 16px;
 }
 
 .filter-grid {
