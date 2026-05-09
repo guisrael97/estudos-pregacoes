@@ -510,9 +510,6 @@ function renderStudy(study, previous, next) {
           <div class="card-eyebrow">Resumo de Estudo</div>
           <h1 class="hero-title">${escapeHtml(study.meta.title)}</h1>
           <p class="hero-subtitle"><strong>Tese/resumo:</strong> ${escapeHtml(study.meta.summary)}</p>
-          <div class="hero-notes">
-            <div class="hero-note"><strong>Texto-base:</strong> ${escapeHtml(study.meta.baseText)}</div>
-          </div>
           <div class="hero-tags">
             ${study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}
           </div>
