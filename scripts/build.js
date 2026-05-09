@@ -407,13 +407,12 @@ function renderIndex(studies) {
     .join("\n");
 
   return pageShell({
-    title: "Base de Estudos de Pregacoes",
+    title: "Sobre Mesa",
     assetPrefix: "",
     body: `
       <div class="topbar">
         <div class="brand">
-          <a href="index.html" class="brand-link">Reader</a>
-          <span class="badge">Base de Estudos</span>
+          <a href="index.html" class="brand-link">SOBRE MESA</a>
         </div>
         <div class="actions">
           <a class="btn btn-ghost" href="studies/">Markdown</a>
@@ -422,9 +421,8 @@ function renderIndex(studies) {
 
       <header class="hero hero-index">
         <div class="hero-copy">
-          <div class="card-eyebrow">Estudos semanais</div>
-          <h1 class="hero-title">Base de estudos de pregacoes</h1>
-          <p class="hero-subtitle">Navegue pelos estudos organizados por data, tema e texto-base.</p>
+          <h1 class="hero-title">SOBRE MESA</h1>
+          <p class="hero-subtitle">A &ldquo;sobremesa&rdquo; espiritual da semana: um espa&ccedil;o para saborear, meditar e viver, ao longo dos dias, a Palavra servida &Agrave; Mesa.</p>
           <div class="hero-notes">
             <div class="hero-note"><strong>Total:</strong> ${studies.length} estudo${studies.length === 1 ? "" : "s"} publicado${studies.length === 1 ? "" : "s"}.</div>
             <div class="hero-note"><strong>Mais recente:</strong> ${latest ? `${formatDate(latest.meta.date)} - ${escapeHtml(latest.meta.title)}` : "Nenhum estudo cadastrado."}</div>
@@ -497,7 +495,7 @@ function renderStudy(study, previous, next) {
 
       <div class="topbar">
         <div class="brand">
-          <a href="../../index.html" class="brand-link">Reader</a>
+          <a href="../../index.html" class="brand-link">SOBRE MESA</a>
           <span class="badge">${escapeHtml(study.meta.type)}</span>
           <span class="badge">${formatDate(study.meta.date)}</span>
         </div>

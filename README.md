@@ -1,4 +1,4 @@
-# Estudos de Pregacoes
+# Sobre Mesa
 
 Base estatica para publicar estudos semanais no GitHub Pages.
 
