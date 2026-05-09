@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v9";
+const assetVersion = "2026-05-09-v11";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -689,7 +689,10 @@ function normalizeReference(ref) {
 const bibleCache = new Map();
 
 function bookCode(book) {
-  return bibleBookCodes[normalizeReference(book.replace(/\\s+/g, " ")).toLowerCase()];
+  const normalizedBook = book
+    .replace(/^([1-3])(?=\\p{L})/u, "$1 ")
+    .replace(/\\s+/g, " ");
+  return bibleBookCodes[normalizeReference(normalizedBook).toLowerCase()];
 }
 
 function escapeText(value) {
@@ -743,11 +746,40 @@ async function renderBibleText(ref, book) {
 }
 
 document.querySelectorAll(".study-content li, .study-content p, .refs-grid li, .mini-text").forEach((el) => {
-  el.innerHTML = el.innerHTML.replace(/\\b((?:[1-3]\\s)?\\p{Lu}\\p{L}+(?:\\s+\\p{Lu}\\p{L}+)?)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?/gu, (match, book) => {
-    const normalizedBook = normalizeReference(book.replace(/\\s+/g, " "));
-    if (!bookCode(book) && !bookCode(normalizedBook)) return match;
-    return '<span class="ref-link" data-ref="' + match + '" data-book="' + book + '">' + match + '</span>';
-  });
+  let contextBook = "";
+  let contextChapter = "";
+  let lastWasVerse = false;
+
+  el.innerHTML = el.innerHTML.replace(
+    /(\\b(?:[1-3]\\s*)?\\p{Lu}\\p{L}+(?:\\s+\\p{Lu}\\p{L}+)?\\s+\\d+(?::\\d+(?:-\\d+)?)?)|((?:\\s+(?:e|,|;)\\s*|\\s*[,;]\\s*)(\\d+(?::\\d+(?:-\\d+)?)?))/gu,
+    (match, full, cont, cPart) => {
+      if (full) {
+        const parts = full.match(/^((?:[1-3]\\s*)?\\p{Lu}\\p{L}+(?:\\s+\\p{Lu}\\p{L}+)?)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?$/u);
+        if (!parts) return match;
+        const book = parts[1];
+        if (!bookCode(book)) {
+          contextBook = "";
+          return match;
+        }
+        contextBook = book;
+        contextChapter = parts[2];
+        lastWasVerse = !!parts[3];
+        return '<span class="ref-link" data-ref="' + full + '" data-book="' + book + '">' + full + '</span>';
+      } else if (cont && contextBook) {
+        const sep = match.slice(0, match.indexOf(cPart));
+        let ref;
+        if (lastWasVerse && !cPart.includes(":")) {
+          ref = contextBook + " " + contextChapter + ":" + cPart;
+        } else {
+          ref = contextBook + " " + cPart;
+          contextChapter = cPart.split(":")[0];
+          lastWasVerse = cPart.includes(":");
+        }
+        return sep + '<span class="ref-link" data-ref="' + ref + '" data-book="' + contextBook + '">' + cPart + '</span>';
+      }
+      return match;
+    }
+  );
 });
 document.addEventListener("click", async (event) => {
   const close = event.target.closest("[data-bible-close]");
