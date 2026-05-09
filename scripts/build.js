@@ -414,9 +414,6 @@ function renderIndex(studies) {
         <div class="brand">
           <a href="index.html" class="brand-link">SOBRE MESA</a>
         </div>
-        <div class="actions">
-          <a class="btn btn-ghost" href="studies/">Markdown</a>
-        </div>
       </div>
 
       <header class="hero hero-index">
