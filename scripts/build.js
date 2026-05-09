@@ -1,10 +1,10 @@
-const fs = require("node:fs");
+﻿const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-nav-refs-1";
+const assetVersion = "2026-05-09-bible-text-1";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -237,7 +237,7 @@ function linesToListItems(lines) {
 }
 
 function renderList(items) {
-  if (!items.length) return '<p class="muted">—</p>';
+  if (!items.length) return '<p class="muted">â€”</p>';
   return `<ul class="list">${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 }
 
@@ -264,11 +264,11 @@ function renderReferencesSection(section) {
       </div>`;
   });
 
-  if (!groups.some((group) => stripHeadingNumber(group.title).toLowerCase() === "implícitas" || stripHeadingNumber(group.title).toLowerCase() === "implicitas")) {
+  if (!groups.some((group) => stripHeadingNumber(group.title).toLowerCase() === "implÃ­citas" || stripHeadingNumber(group.title).toLowerCase() === "implicitas")) {
     cards.push(`
       <div class="mini-card">
-        <div class="mini-label">Implícitas</div>
-        <p class="muted">—</p>
+        <div class="mini-label">ImplÃ­citas</div>
+        <p class="muted">â€”</p>
       </div>`);
   }
 
@@ -298,10 +298,10 @@ function renderMapSection(section) {
         .map((point, index) => {
           const title = stripHeadingNumber(point.title).replace(/^Ponto\s+\d+:\s*/i, "");
           let lines = point.content.map((line) => line.trim()).filter(Boolean);
-          const anchorResult = extractLabelValue(lines, /^\*\*Âncora bíblica:\*\*\s*/i);
+          const anchorResult = extractLabelValue(lines, /^\*\*Ã‚ncora bÃ­blica:\*\*\s*/i);
           lines = anchorResult.lines;
           const keyResult = extractLabelValue(lines, /^\*\*Frase-chave:\*\*\s*/i);
-          lines = keyResult.lines.filter((line) => !/^Uma frase forte da pregação foi:?$/i.test(line));
+          lines = keyResult.lines.filter((line) => !/^Uma frase forte da pregaÃ§Ã£o foi:?$/i.test(line));
           const teaching = markdownToHtml(lines.join("\n").trim());
 
           return `
@@ -310,17 +310,17 @@ function renderMapSection(section) {
               <h3>${escapeHtml(title)}</h3>
               <div class="mapa-grid">
                 <div class="mini-card">
-                  <div class="mini-label">Âncora</div>
-                  <div class="mini-text">${anchorResult.value || "—"}</div>
+                  <div class="mini-label">Ã‚ncora</div>
+                  <div class="mini-text">${anchorResult.value || "â€”"}</div>
                 </div>
                 <div class="mini-card">
                   <div class="mini-label">Frase-chave</div>
-                  <div class="mini-text">${keyResult.value || "—"}</div>
+                  <div class="mini-text">${keyResult.value || "â€”"}</div>
                 </div>
               </div>
               <div class="mini-card teaching">
                 <div class="mini-label">Ensino</div>
-                <div class="mini-text">${teaching || "—"}</div>
+                <div class="mini-text">${teaching || "â€”"}</div>
               </div>
             </article>`;
         })
@@ -347,7 +347,7 @@ function renderReadingsSection(section) {
 function renderSectionContent(section) {
   const title = stripHeadingNumber(section.title).toLowerCase();
 
-  if (title.includes("referências bíblicas") || title.includes("referencias biblicas")) {
+  if (title.includes("referÃªncias bÃ­blicas") || title.includes("referencias biblicas")) {
     return renderReferencesSection(section);
   }
 
@@ -355,7 +355,7 @@ function renderSectionContent(section) {
     return renderFlowSection(section);
   }
 
-  if (title.includes("mapa bíblia") || title.includes("mapa biblia")) {
+  if (title.includes("mapa bÃ­blia") || title.includes("mapa biblia")) {
     return renderMapSection(section);
   }
 
@@ -363,7 +363,7 @@ function renderSectionContent(section) {
     return renderReadingsSection(section);
   }
 
-  return `<div class="prose${title.includes("tese central") || title.includes("oração") || title.includes("oracao") ? " lead" : ""} study-content">
+  return `<div class="prose${title.includes("tese central") || title.includes("oraÃ§Ã£o") || title.includes("oracao") ? " lead" : ""} study-content">
     ${markdownToHtml(section.content.join("\n").trim())}
   </div>`;
 }
@@ -372,8 +372,8 @@ function sectionClassFor(section, index) {
   const title = stripHeadingNumber(section.title).toLowerCase();
   const classes = ["section"];
   if (index === 0) classes.push("section-anchor");
-  if (title.includes("tese central") || title.includes("oração") || title.includes("oracao")) classes.push("section-thesis");
-  if (title.includes("aplicações") || title.includes("aplicacoes") || title.includes("ações práticas") || title.includes("acoes praticas")) classes.push("section-action");
+  if (title.includes("tese central") || title.includes("oraÃ§Ã£o") || title.includes("oracao")) classes.push("section-thesis");
+  if (title.includes("aplicaÃ§Ãµes") || title.includes("aplicacoes") || title.includes("aÃ§Ãµes prÃ¡ticas") || title.includes("acoes praticas")) classes.push("section-action");
   return classes.join(" ");
 }
 
@@ -665,57 +665,108 @@ const bookMap = {
   "Apocalipse": "Revelation",
   "Mateus": "Matthew",
   "Joao": "John",
-  "João": "John",
+  "JoÃ£o": "John",
   "Hebreus": "Hebrews",
   "Tiago": "James",
   "Romanos": "Romans",
   "Galatas": "Galatians",
-  "Gálatas": "Galatians",
+  "GÃ¡latas": "Galatians",
   "Isaias": "Isaiah",
-  "Isaías": "Isaiah",
+  "IsaÃ­as": "Isaiah",
   "Filipenses": "Philippians",
   "Salmo": "Psalms",
   "Lucas": "Luke",
   "1 Joao": "1 John",
-  "1 João": "1 John",
+  "1 JoÃ£o": "1 John",
   "1 Pedro": "1 Peter",
   "2 Corintios": "2 Corinthians",
-  "2 Coríntios": "2 Corinthians"
-};
-
-const localBible = {
-  "Apocalipse 3:14-22": "<p><strong>14</strong> Ao anjo da igreja em Laodiceia escreva: Estas sao as palavras do Amem, a testemunha fiel e verdadeira, o soberano da criacao de Deus. <strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca. <strong>17</strong> Voce diz: Estou rico, adquiri riquezas e nao preciso de nada. Nao reconhece, porem, que e miseravel, digno de compaixao, pobre, cego e que esta nu. <strong>18</strong> Dou-lhe este conselho: Compre de mim ouro refinado no fogo e voce se tornara rico; compre roupas brancas e vista-se para cobrir a sua vergonhosa nudez; e compre colirio para ungir os seus olhos e poder enxergar. <strong>19</strong> Repreendo e disciplino aqueles que eu amo. Por isso, seja diligente e arrependa-se. <strong>20</strong> Eis que estou a porta e bato. Se alguem ouvir a minha voz e abrir a porta, entrarei e cearei com ele, e ele comigo. <strong>21</strong> Ao vencedor darei o direito de sentar-se comigo em meu trono, assim como eu tambem venci e sentei-me com meu Pai em seu trono. <strong>22</strong> Aquele que tem ouvidos ouca o que o Espirito diz as igrejas.</p>",
-  "Apocalipse 2:4-5": "<p><strong>4</strong> Contra voce, porem, tenho isto: voce abandonou o seu primeiro amor. <strong>5</strong> Lembre-se de onde caiu! Arrependa-se e pratique as obras que praticava no principio.</p>",
-  "Apocalipse 3:14-17": "<p><strong>14</strong> Ao anjo da igreja em Laodiceia escreva: Estas sao as palavras do Amem, a testemunha fiel e verdadeira, o soberano da criacao de Deus. <strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca. <strong>17</strong> Voce diz: Estou rico, adquiri riquezas e nao preciso de nada. Nao reconhece, porem, que e miseravel, digno de compaixao, pobre, cego e que esta nu.</p>",
-  "Apocalipse 3:15-16": "<p><strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca.</p>",
-  "Mateus 7:21-23": "<p><strong>21</strong> Nem todo aquele que me diz: Senhor, Senhor, entrara no Reino dos ceus, mas apenas aquele que faz a vontade de meu Pai que esta nos ceus. <strong>23</strong> Entao eu lhes direi claramente: Nunca os conheci.</p>",
-  "Joao 15:1-8": "<p><strong>1</strong> Eu sou a videira verdadeira, e meu Pai e o agricultor. <strong>4</strong> Permanecam em mim, e eu permanecerei em voces. <strong>5</strong> Eu sou a videira; voces sao os ramos. Se alguem permanecer em mim e eu nele, esse dara muito fruto; pois sem mim voces nao podem fazer coisa alguma.</p>",
-  "Hebreus 12:5-11": "<p><strong>6</strong> O Senhor disciplina a quem ama. <strong>11</strong> Nenhuma disciplina parece ser motivo de alegria no momento, mas sim de tristeza. Mais tarde, porem, produz fruto de justica e paz para aqueles que por ela foram exercitados.</p>",
-  "Tiago 2:14-26": "<p><strong>26</strong> Assim como o corpo sem espirito esta morto, tambem a fe sem obras esta morta.</p>",
-  "1 Joao 5:3": "<p><strong>3</strong> Porque nisto consiste o amor a Deus: em obedecer aos seus mandamentos. E os seus mandamentos nao sao pesados.</p>",
-  "2 Corintios 5:14-15": "<p><strong>14</strong> Pois o amor de Cristo nos constrange. <strong>15</strong> E ele morreu por todos para que aqueles que vivem ja nao vivam mais para si mesmos, mas para aquele que por eles morreu e ressuscitou.</p>",
-  "Galatas 2:20": "<p><strong>20</strong> Fui crucificado com Cristo. Assim, ja nao sou eu quem vive, mas Cristo vive em mim.</p>",
-  "1 Pedro 1:6-9": "<p><strong>7</strong> Assim acontece para que fique comprovado que a fe que voces tem redundara em louvor, gloria e honra na revelacao de Jesus Cristo.</p>",
-  "Romanos 12:1-2": "<p><strong>1</strong> Oferecam-se em sacrificio vivo, santo e agradavel a Deus. <strong>2</strong> Nao se amoldem ao padrao deste mundo, mas transformem-se pela renovacao da sua mente.</p>",
-  "Lucas 9:23": "<p><strong>23</strong> Se alguem quiser acompanhar-me, negue-se a si mesmo, tome diariamente a sua cruz e siga-me.</p>",
-  "Isaias 55": "<p><strong>Isaías 55</strong> Convite para buscar o Senhor, receber sua graça e voltar-se para seus caminhos. O capítulo chama o povo a deixar a autossuficiência, ouvir a Palavra e confiar que os pensamentos e caminhos de Deus são mais altos.</p>",
-  "Filipenses 3": "<p><strong>Filipenses 3</strong> Paulo apresenta Cristo como ganho supremo, rejeita a confiança na própria justiça e aponta para uma vida que prossegue para o alvo da soberana vocação de Deus em Cristo Jesus.</p>",
-  "Romanos 12": "<p><strong>Romanos 12</strong> Chamado a oferecer a vida como sacrifício vivo, renovar a mente e viver uma fé prática, humilde, amorosa e transformada.</p>",
-  "Salmo 27": "<p><strong>Salmo 27</strong> Declaração de confiança no Senhor como luz e salvação, com desejo profundo de habitar em sua presença e esperar com coragem pelo seu cuidado.</p>"
+  "2 CorÃ­ntios": "2 Corinthians"
 };
 
 function normalizeReference(ref) {
   return ref
     .normalize("NFD")
     .replace(/[\\u0300-\\u036f]/g, "")
-    .replace(/í/g, "i")
-    .replace(/Í/g, "I");
+    .replace(/Ã­/g, "i")
+    .replace(/Ã/g, "I");
+}
+
+const bibleBookCodes = {
+  "apocalipse": "re",
+  "mateus": "mt",
+  "joao": "jo",
+  "hebreus": "hb",
+  "tiago": "jm",
+  "romanos": "rm",
+  "galatas": "gl",
+  "isaias": "is",
+  "filipenses": "ph",
+  "salmo": "ps",
+  "salmos": "ps",
+  "lucas": "lk",
+  "1 joao": "1jo",
+  "1 pedro": "1pe",
+  "2 corintios": "2co"
+};
+
+const bibleCache = new Map();
+
+function bookCode(book) {
+  return bibleBookCodes[normalizeReference(book.replace(/\\s+/g, " ")).toLowerCase()];
+}
+
+function escapeText(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function parseBibleReference(ref, book) {
+  const code = bookCode(book);
+  const detail = ref.slice(book.length).trim().match(/^(\\d+)(?::(\\d+)(?:-(\\d+))?)?$/);
+  if (!code || !detail) return null;
+
+  return {
+    code,
+    chapter: Number(detail[1]),
+    startVerse: detail[2] ? Number(detail[2]) : 1,
+    endVerse: detail[3] ? Number(detail[3]) : null
+  };
+}
+
+async function fetchBibleBook(code) {
+  if (bibleCache.has(code)) return bibleCache.get(code);
+  const url = "https://raw.githubusercontent.com/MaatheusGois/bible/main/versions/pt-br/acf/" + code + "/" + code + ".json";
+  const response = await fetch(url, { cache: "force-cache" });
+  if (!response.ok) throw new Error("Falha ao carregar Biblia");
+  const book = await response.json();
+  bibleCache.set(code, book);
+  return book;
+}
+
+async function renderBibleText(ref, book) {
+  const parsed = parseBibleReference(ref, book);
+  if (!parsed) throw new Error("Referencia invalida");
+
+  const bibleBook = await fetchBibleBook(parsed.code);
+  const chapter = bibleBook.chapters[parsed.chapter - 1];
+  if (!chapter) throw new Error("Capitulo nao encontrado");
+
+  const endVerse = parsed.endVerse || chapter.length;
+  const verses = chapter.slice(parsed.startVerse - 1, endVerse);
+  if (!verses.length) throw new Error("Versiculo nao encontrado");
+
+  return verses
+    .map((text, index) => "<p><strong>" + (parsed.startVerse + index) + "</strong> " + escapeText(text) + "</p>")
+    .join("");
 }
 
 document.querySelectorAll(".study-content li, .study-content p, .refs-grid li, .mini-text").forEach((el) => {
-  el.innerHTML = el.innerHTML.replace(/\\b((?:[1-3]\\s)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+(?:\\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+)?)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?/g, (match, book) => {
+  el.innerHTML = el.innerHTML.replace(/\\b((?:[1-3]\\s)?[A-ZÃÃ‰ÃÃ“ÃšÃ‚ÃŠÃ”ÃƒÃ•Ã‡][A-Za-zÃÃ‰ÃÃ“ÃšÃ¡Ã©Ã­Ã³ÃºÃ‚ÃŠÃ”Ã¢ÃªÃ´ÃƒÃ•Ã£ÃµÃ‡Ã§]+(?:\\s+[A-ZÃÃ‰ÃÃ“ÃšÃ‚ÃŠÃ”ÃƒÃ•Ã‡][A-Za-zÃÃ‰ÃÃ“ÃšÃ¡Ã©Ã­Ã³ÃºÃ‚ÃŠÃ”Ã¢ÃªÃ´ÃƒÃ•Ã£ÃµÃ‡Ã§]+)?)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?/g, (match, book) => {
     const normalizedBook = normalizeReference(book.replace(/\\s+/g, " "));
-    if (!bookMap[book] && !bookMap[book.replace(/\\s+/g, " ")] && !bookMap[normalizedBook]) return match;
+    if (!bookCode(book) && !bookCode(normalizedBook)) return match;
     return '<span class="ref-link" data-ref="' + match + '" data-book="' + book + '">' + match + '</span>';
   });
 });
@@ -732,26 +783,15 @@ document.addEventListener("click", async (event) => {
 
   const ref = link.dataset.ref.trim();
   const book = link.dataset.book.trim();
-  const englishBook = bookMap[book] || bookMap[book.replace(/\\s+/g, " ")] || bookMap[normalizeReference(book)] || book;
-  const query = encodeURIComponent(ref.replace(book, englishBook));
 
   modalTitle.textContent = ref;
   modalBody.innerHTML = "<p>Carregando texto biblico...</p>";
   modal.hidden = false;
 
-  const localRef = localBible[ref] || localBible[normalizeReference(ref)];
-  if (localRef) {
-    modalBody.innerHTML = localRef;
-    return;
-  }
-
   try {
-    const response = await fetch("https://bible-api.com/" + query + "?translation=almeida");
-    if (!response.ok) throw new Error("Falha ao buscar referencia");
-    const data = await response.json();
-    modalBody.innerHTML = data.verses.map((verse) => "<p><strong>" + verse.verse + "</strong> " + verse.text + "</p>").join("");
+    modalBody.innerHTML = await renderBibleText(ref, book);
   } catch (error) {
-    modalBody.innerHTML = "<p>Nao conseguimos buscar <strong>" + ref + "</strong> automaticamente agora.</p>";
+    modalBody.innerHTML = "<p>Nao conseguimos carregar <strong>" + escapeText(ref) + "</strong> agora.</p>";
   }
 });
 `;
