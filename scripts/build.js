@@ -203,6 +203,179 @@ function inlineMarkdown(text) {
   return escaped;
 }
 
+function stripHeadingNumber(title) {
+  return title.replace(/^\d+\.\s*/, "").trim();
+}
+
+function splitSubsections(markdown) {
+  const lines = markdown.split(/\r?\n/);
+  const sections = [];
+  let current = null;
+
+  lines.forEach((line) => {
+    const heading = line.match(/^###\s+(.+)$/);
+    if (heading) {
+      if (current) sections.push(current);
+      current = { title: heading[1].trim(), content: [] };
+      return;
+    }
+
+    if (!current) current = { title: "", content: [] };
+    current.content.push(line);
+  });
+
+  if (current) sections.push(current);
+  return sections.filter((section) => section.title || section.content.join("").trim());
+}
+
+function linesToListItems(lines) {
+  const text = Array.isArray(lines) ? lines.join("\n") : lines;
+  const html = markdownToHtml(text.trim());
+  const matches = [...html.matchAll(/<p>([\s\S]*?)<\/p>|<li>([\s\S]*?)<\/li>/g)];
+  return matches.map((match) => match[1] || match[2]).filter(Boolean);
+}
+
+function renderList(items) {
+  if (!items.length) return '<p class="muted">—</p>';
+  return `<ul class="list">${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+}
+
+function extractLabelValue(lines, labelPattern) {
+  const index = lines.findIndex((line) => labelPattern.test(line.trim()));
+  if (index === -1) return { value: "", lines };
+
+  const line = lines[index].trim();
+  const value = line.replace(labelPattern, "").trim();
+  return {
+    value: inlineMarkdown(value),
+    lines: lines.filter((_, lineIndex) => lineIndex !== index),
+  };
+}
+
+function renderReferencesSection(section) {
+  const groups = splitSubsections(section.content.join("\n"));
+  const cards = groups.map((group) => {
+    const items = linesToListItems(group.content);
+    return `
+      <div class="mini-card">
+        <div class="mini-label">${escapeHtml(stripHeadingNumber(group.title))}</div>
+        ${renderList(items)}
+      </div>`;
+  });
+
+  if (!groups.some((group) => stripHeadingNumber(group.title).toLowerCase() === "implícitas" || stripHeadingNumber(group.title).toLowerCase() === "implicitas")) {
+    cards.push(`
+      <div class="mini-card">
+        <div class="mini-label">Implícitas</div>
+        <p class="muted">—</p>
+      </div>`);
+  }
+
+  return `<div class="refs-grid">${cards.join("\n")}</div>`;
+}
+
+function renderFlowSection(section) {
+  const steps = splitSubsections(section.content.join("\n"));
+  return `
+    <div class="flow">
+      ${steps
+        .map((step, index) => `
+          <div class="flow-item">
+            <div class="flow-step">Etapa ${index + 1}</div>
+            <div class="flow-title">${escapeHtml(stripHeadingNumber(step.title))}</div>
+            ${renderList(linesToListItems(step.content))}
+          </div>`)
+        .join("\n")}
+    </div>`;
+}
+
+function renderMapSection(section) {
+  const points = splitSubsections(section.content.join("\n"));
+  return `
+    <div class="mapa-stack">
+      ${points
+        .map((point, index) => {
+          const title = stripHeadingNumber(point.title).replace(/^Ponto\s+\d+:\s*/i, "");
+          let lines = point.content.map((line) => line.trim()).filter(Boolean);
+          const anchorResult = extractLabelValue(lines, /^\*\*Âncora bíblica:\*\*\s*/i);
+          lines = anchorResult.lines;
+          const keyResult = extractLabelValue(lines, /^\*\*Frase-chave:\*\*\s*/i);
+          lines = keyResult.lines.filter((line) => !/^Uma frase forte da pregação foi:?$/i.test(line));
+          const teaching = markdownToHtml(lines.join("\n").trim());
+
+          return `
+            <article class="mapa-item">
+              <div class="card-eyebrow">Ponto ${index + 1}</div>
+              <h3>${escapeHtml(title)}</h3>
+              <div class="mapa-grid">
+                <div class="mini-card">
+                  <div class="mini-label">Âncora</div>
+                  <div class="mini-text">${anchorResult.value || "—"}</div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-label">Frase-chave</div>
+                  <div class="mini-text">${keyResult.value || "—"}</div>
+                </div>
+              </div>
+              <div class="mini-card teaching">
+                <div class="mini-label">Ensino</div>
+                <div class="mini-text">${teaching || "—"}</div>
+              </div>
+            </article>`;
+        })
+        .join("\n")}
+    </div>`;
+}
+
+function renderReadingsSection(section) {
+  const groups = splitSubsections(section.content.join("\n"));
+  if (!groups.length) return markdownToHtml(section.content.join("\n").trim());
+
+  return `
+    <div class="refs-grid">
+      ${groups
+        .map((group) => `
+          <div class="mini-card">
+            <div class="mini-label">${escapeHtml(stripHeadingNumber(group.title))}</div>
+            ${renderList(linesToListItems(group.content))}
+          </div>`)
+        .join("\n")}
+    </div>`;
+}
+
+function renderSectionContent(section) {
+  const title = stripHeadingNumber(section.title).toLowerCase();
+
+  if (title.includes("referências bíblicas") || title.includes("referencias biblicas")) {
+    return renderReferencesSection(section);
+  }
+
+  if (title.includes("fluxo da mensagem")) {
+    return renderFlowSection(section);
+  }
+
+  if (title.includes("mapa bíblia") || title.includes("mapa biblia")) {
+    return renderMapSection(section);
+  }
+
+  if (title.includes("leituras complementares")) {
+    return renderReadingsSection(section);
+  }
+
+  return `<div class="prose${title.includes("tese central") || title.includes("oração") || title.includes("oracao") ? " lead" : ""} study-content">
+    ${markdownToHtml(section.content.join("\n").trim())}
+  </div>`;
+}
+
+function sectionClassFor(section, index) {
+  const title = stripHeadingNumber(section.title).toLowerCase();
+  const classes = ["section"];
+  if (index === 0) classes.push("section-anchor");
+  if (title.includes("tese central") || title.includes("oração") || title.includes("oracao")) classes.push("section-thesis");
+  if (title.includes("aplicações") || title.includes("aplicacoes") || title.includes("ações práticas") || title.includes("acoes praticas")) classes.push("section-action");
+  return classes.join(" ");
+}
+
 function renderIndex(studies) {
   const latest = studies[0];
   const years = [...new Set(studies.map((study) => study.meta.date.slice(0, 4)))];
@@ -305,14 +478,12 @@ function renderIndex(studies) {
 function renderStudy(study, previous, next) {
   const sections = study.sections
     .map((section, index) => {
-      const id = slugify(section.title);
-      const sectionClass = index === 0 ? "section section-anchor" : "section";
+      const displayTitle = stripHeadingNumber(section.title);
+      const id = slugify(displayTitle);
       return `
-        <section class="card ${sectionClass}" id="${id}" data-section="${id}">
-          <h2>${index + 1}) ${escapeHtml(section.title)}</h2>
-          <div class="prose study-content">
-            ${markdownToHtml(section.content.join("\n").trim())}
-          </div>
+        <section class="card ${sectionClassFor(section, index)}" id="${id}" data-section="${id}">
+          <h2>${index + 1}) ${escapeHtml(displayTitle)}</h2>
+          ${renderSectionContent(section)}
         </section>`;
     })
     .join("\n");
@@ -358,8 +529,9 @@ function renderStudy(study, previous, next) {
         <div class="toc-grid">
           ${study.sections
             .map((section) => {
-              const id = slugify(section.title);
-              return `<a class="toc-link" href="#${id}" data-section-link="${id}">${escapeHtml(section.title)}</a>`;
+              const displayTitle = stripHeadingNumber(section.title);
+              const id = slugify(displayTitle);
+              return `<a class="toc-link" href="#${id}" data-section-link="${id}">${escapeHtml(displayTitle)}</a>`;
             })
             .join("")}
         </div>
@@ -533,7 +705,15 @@ const localBible = {
   "Lucas 9:23": "<p><strong>23</strong> Se alguem quiser acompanhar-me, negue-se a si mesmo, tome diariamente a sua cruz e siga-me.</p>"
 };
 
-document.querySelectorAll(".study-content li, .study-content p").forEach((el) => {
+function normalizeReference(ref) {
+  return ref
+    .normalize("NFD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .replace(/í/g, "i")
+    .replace(/Í/g, "I");
+}
+
+document.querySelectorAll(".study-content li, .study-content p, .refs-grid li, .mini-text").forEach((el) => {
   el.innerHTML = el.innerHTML.replace(/\\b((?:[1-3]\\s)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?/g, (match, book) => {
     if (!bookMap[book] && !bookMap[book.replace(/\\s+/g, " ")]) return match;
     return '<span class="ref-link" data-ref="' + match + '" data-book="' + book + '">' + match + '</span>';
@@ -559,8 +739,9 @@ document.addEventListener("click", async (event) => {
   modalBody.innerHTML = "<p>Carregando texto biblico...</p>";
   modal.hidden = false;
 
-  if (localBible[ref]) {
-    modalBody.innerHTML = localBible[ref];
+  const localRef = localBible[ref] || localBible[normalizeReference(ref)];
+  if (localRef) {
+    modalBody.innerHTML = localRef;
     return;
   }
 
