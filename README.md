@@ -1,53 +1,40 @@
-# Sobre Mesa
+# SOBRE MESA
 
-Base estatica para publicar estudos semanais no GitHub Pages.
+## Conceito
 
-## Como adicionar um estudo
+**Sobre Mesa** é um app que transforma as pregações da igreja **A Mesa** em estudos práticos, devocionais e aplicáveis para a semana.
 
-1. Crie um arquivo Markdown em `studies/` usando a data no nome:
+A proposta é ajudar a igreja a revisitar a mensagem, meditar na Palavra e transformar aquilo que foi pregado em prática diária.
 
-   `studies/2026-05-10.md`
+## Frase de posicionamento
 
-2. Use este formato:
+> **Sobre Mesa**  
+> Depois da Palavra servida, vem o tempo de saborear, meditar e viver.
 
-   ```md
-   ---
-   title: "Titulo do estudo"
-   date: "2026-05-10"
-   type: "Domingo"
-   service: "Culto Noite"
-   baseText: "Texto biblico principal"
-   summary: "Resumo curto da mensagem."
-   tags: ["Tema 1", "Tema 2"]
-   ---
+## Versão curta
 
-   ## Tese central
+**Sobre Mesa** é a “sobremesa” espiritual da semana: um estudo prático para continuar vivendo aquilo que foi servido na A Mesa.
 
-   Conteudo do estudo...
-   ```
+## O que o app entrega
 
-3. Gere o site:
+- Resumo da pregação
+- Texto-base bíblico
+- Referências principais, complementares e implícitas
+- Pontos centrais do sermão
+- Aplicações práticas
+- Perguntas de reflexão
+- Oração guiada
+- Desafios da semana
+- Espaço para anotações pessoais
 
-   ```bash
-   npm run build
-   ```
+## Para quem é
 
-   Se o `npm` nao estiver disponivel no computador, use o Node diretamente:
+Para qualquer pessoa que deseja sair da posição de apenas ouvinte e começar a viver, de forma prática, aquilo que tem sido pregado.
 
-   ```bash
-   node scripts/build.js
-   ```
+O **Sobre Mesa** é para quem não quer apenas escutar uma mensagem, mas meditar, aplicar e transformar a Palavra em obediência no dia a dia.
 
-4. Publique no GitHub. O workflow em `.github/workflows/pages.yml` gera e publica o site automaticamente quando houver push na branch `main`.
+## Proposta central
 
-## Estrutura
+**Sobre Mesa** não é apenas uma biblioteca de pregações.
 
-- `studies/`: estudos em Markdown.
-- `scripts/build.js`: gerador das paginas HTML.
-- `assets/styles.css`: tema visual compartilhado.
-- `index.html`: indice gerado.
-- `estudos/<data>/index.html`: paginas geradas dos estudos.
-
-## Fluxo pelo chat
-
-Quando voce enviar um novo `.md`, o conteudo pode ser revisado, padronizado e gerado por aqui. Se o campo `type` nao vier definido, vamos confirmar se o estudo e de `Domingo`, `Chama`, `Conferencia` ou outro tipo antes de publicar.
+É uma ferramenta para ajudar a igreja a viver durante a semana aquilo que Deus falou no culto.
