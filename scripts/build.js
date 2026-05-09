@@ -117,6 +117,10 @@ function splitSections(markdown) {
   return sections;
 }
 
+function isHorizontalRule(line) {
+  return /^-{3,}$/.test(line.trim());
+}
+
 function markdownToHtml(markdown) {
   const lines = markdown.split(/\r?\n/);
   const html = [];
@@ -139,6 +143,12 @@ function markdownToHtml(markdown) {
     const trimmed = line.trim();
 
     if (!trimmed) {
+      flushParagraph();
+      closeList();
+      return;
+    }
+
+    if (isHorizontalRule(trimmed)) {
       flushParagraph();
       closeList();
       return;
