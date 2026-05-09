@@ -20,7 +20,7 @@
       <div class="topbar">
         <div class="brand">
           <a href="../../index.html" class="brand-link">Reader</a>
-          <span class="badge">Culto Noite</span>
+          <span class="badge">Domingo</span>
           <span class="badge">03/05/2026</span>
         </div>
         <div class="actions">
@@ -303,6 +303,23 @@ const bookMap = {
   "2 Coríntios": "2 Corinthians"
 };
 
+const localBible = {
+  "Apocalipse 3:14-22": "<p><strong>14</strong> Ao anjo da igreja em Laodiceia escreva: Estas sao as palavras do Amem, a testemunha fiel e verdadeira, o soberano da criacao de Deus. <strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca. <strong>17</strong> Voce diz: Estou rico, adquiri riquezas e nao preciso de nada. Nao reconhece, porem, que e miseravel, digno de compaixao, pobre, cego e que esta nu. <strong>18</strong> Dou-lhe este conselho: Compre de mim ouro refinado no fogo e voce se tornara rico; compre roupas brancas e vista-se para cobrir a sua vergonhosa nudez; e compre colirio para ungir os seus olhos e poder enxergar. <strong>19</strong> Repreendo e disciplino aqueles que eu amo. Por isso, seja diligente e arrependa-se. <strong>20</strong> Eis que estou a porta e bato. Se alguem ouvir a minha voz e abrir a porta, entrarei e cearei com ele, e ele comigo. <strong>21</strong> Ao vencedor darei o direito de sentar-se comigo em meu trono, assim como eu tambem venci e sentei-me com meu Pai em seu trono. <strong>22</strong> Aquele que tem ouvidos ouca o que o Espirito diz as igrejas.</p>",
+  "Apocalipse 2:4-5": "<p><strong>4</strong> Contra voce, porem, tenho isto: voce abandonou o seu primeiro amor. <strong>5</strong> Lembre-se de onde caiu! Arrependa-se e pratique as obras que praticava no principio.</p>",
+  "Apocalipse 3:14-17": "<p><strong>14</strong> Ao anjo da igreja em Laodiceia escreva: Estas sao as palavras do Amem, a testemunha fiel e verdadeira, o soberano da criacao de Deus. <strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca. <strong>17</strong> Voce diz: Estou rico, adquiri riquezas e nao preciso de nada. Nao reconhece, porem, que e miseravel, digno de compaixao, pobre, cego e que esta nu.</p>",
+  "Apocalipse 3:15-16": "<p><strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca.</p>",
+  "Mateus 7:21-23": "<p><strong>21</strong> Nem todo aquele que me diz: Senhor, Senhor, entrara no Reino dos ceus, mas apenas aquele que faz a vontade de meu Pai que esta nos ceus. <strong>23</strong> Entao eu lhes direi claramente: Nunca os conheci.</p>",
+  "Joao 15:1-8": "<p><strong>1</strong> Eu sou a videira verdadeira, e meu Pai e o agricultor. <strong>4</strong> Permanecam em mim, e eu permanecerei em voces. <strong>5</strong> Eu sou a videira; voces sao os ramos. Se alguem permanecer em mim e eu nele, esse dara muito fruto; pois sem mim voces nao podem fazer coisa alguma.</p>",
+  "Hebreus 12:5-11": "<p><strong>6</strong> O Senhor disciplina a quem ama. <strong>11</strong> Nenhuma disciplina parece ser motivo de alegria no momento, mas sim de tristeza. Mais tarde, porem, produz fruto de justica e paz para aqueles que por ela foram exercitados.</p>",
+  "Tiago 2:14-26": "<p><strong>26</strong> Assim como o corpo sem espirito esta morto, tambem a fe sem obras esta morta.</p>",
+  "1 Joao 5:3": "<p><strong>3</strong> Porque nisto consiste o amor a Deus: em obedecer aos seus mandamentos. E os seus mandamentos nao sao pesados.</p>",
+  "2 Corintios 5:14-15": "<p><strong>14</strong> Pois o amor de Cristo nos constrange. <strong>15</strong> E ele morreu por todos para que aqueles que vivem ja nao vivam mais para si mesmos, mas para aquele que por eles morreu e ressuscitou.</p>",
+  "Galatas 2:20": "<p><strong>20</strong> Fui crucificado com Cristo. Assim, ja nao sou eu quem vive, mas Cristo vive em mim.</p>",
+  "1 Pedro 1:6-9": "<p><strong>7</strong> Assim acontece para que fique comprovado que a fe que voces tem redundara em louvor, gloria e honra na revelacao de Jesus Cristo.</p>",
+  "Romanos 12:1-2": "<p><strong>1</strong> Oferecam-se em sacrificio vivo, santo e agradavel a Deus. <strong>2</strong> Nao se amoldem ao padrao deste mundo, mas transformem-se pela renovacao da sua mente.</p>",
+  "Lucas 9:23": "<p><strong>23</strong> Se alguem quiser acompanhar-me, negue-se a si mesmo, tome diariamente a sua cruz e siga-me.</p>"
+};
+
 document.querySelectorAll(".study-content li, .study-content p").forEach((el) => {
   el.innerHTML = el.innerHTML.replace(/\b((?:[1-3]\s)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+)\s+(\d+)(?::(\d+)(?:-(\d+))?)?/g, (match, book) => {
     if (!bookMap[book] && !bookMap[book.replace(/\s+/g, " ")]) return match;
@@ -328,6 +345,11 @@ document.addEventListener("click", async (event) => {
   modalTitle.textContent = ref;
   modalBody.innerHTML = "<p>Carregando texto biblico...</p>";
   modal.hidden = false;
+
+  if (localBible[ref]) {
+    modalBody.innerHTML = localBible[ref];
+    return;
+  }
 
   try {
     const response = await fetch("https://bible-api.com/" + query + "?translation=almeida");

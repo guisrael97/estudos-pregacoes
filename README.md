@@ -14,6 +14,7 @@ Base estatica para publicar estudos semanais no GitHub Pages.
    ---
    title: "Titulo do estudo"
    date: "2026-05-10"
+   type: "Domingo"
    service: "Culto Noite"
    baseText: "Texto biblico principal"
    summary: "Resumo curto da mensagem."
@@ -49,4 +50,4 @@ Base estatica para publicar estudos semanais no GitHub Pages.
 
 ## Fluxo pelo chat
 
-Quando voce enviar um novo `.md`, o conteudo pode ser revisado, padronizado e gerado por aqui. O resultado esperado e atualizar `studies/`, rodar `npm run build` e publicar os arquivos gerados.
+Quando voce enviar um novo `.md`, o conteudo pode ser revisado, padronizado e gerado por aqui. Se o campo `type` nao vier definido, vamos confirmar se o estudo e de `Domingo`, `Chama`, `Conferencia` ou outro tipo antes de publicar.

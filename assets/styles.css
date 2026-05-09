@@ -839,3 +839,56 @@ select {
   overflow-y: auto;
   padding-right: 8px;
 }
+
+.filter-grid {
+  grid-template-columns: minmax(240px, 1.7fr) repeat(4, minmax(135px, 1fr));
+}
+
+.field select option {
+  background: #fff3e9;
+  color: #24160f;
+}
+
+.summary-card {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.summary-card h2 {
+  margin-bottom: 0;
+}
+
+.summary-card-copy {
+  margin: 0;
+}
+
+.summary-card-meta {
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.summary-card-actions {
+  margin-top: 4px;
+}
+
+.summary-card .btn {
+  width: fit-content;
+}
+
+@media (max-width: 1100px) {
+  .filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card .btn {
+    width: 100%;
+  }
+}

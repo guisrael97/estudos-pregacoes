@@ -77,12 +77,18 @@ function parseValue(value) {
 }
 
 function validateMeta(meta) {
-  ["title", "date", "service", "baseText", "summary"].forEach((key) => {
+  ["title", "date", "baseText", "summary"].forEach((key) => {
     if (!meta[key]) {
       throw new Error(`Front matter incompleto: faltou "${key}".`);
     }
   });
 
+  meta.type = meta.type || meta.service;
+  if (!meta.type) {
+    throw new Error('Front matter incompleto: faltou "type". Use valores como "Domingo", "Chama" ou "Conferencia".');
+  }
+
+  meta.service = meta.service || meta.type;
   if (!Array.isArray(meta.tags)) meta.tags = [];
 }
 
@@ -199,17 +205,20 @@ function inlineMarkdown(text) {
 
 function renderIndex(studies) {
   const latest = studies[0];
+  const years = [...new Set(studies.map((study) => study.meta.date.slice(0, 4)))];
+  const months = [...new Set(studies.map((study) => study.meta.date.slice(5, 7)))].sort();
+  const types = [...new Set(studies.map((study) => study.meta.type))].sort((a, b) => a.localeCompare(b));
   const studyCards = studies
     .map((study) => {
       const tags = study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("");
       return `
-        <article class="summary-card" data-study-card data-title="${attr(study.meta.title)}" data-tags="${attr(study.meta.tags.join(" "))}" data-date="${attr(study.meta.date)}">
+        <article class="summary-card" data-study-card data-title="${attr(study.meta.title)}" data-tags="${attr(study.meta.tags.join(" "))}" data-type="${attr(study.meta.type)}" data-date="${attr(study.meta.date)}">
           <div class="summary-card-top">
             <div>
               <div class="card-eyebrow">${formatDate(study.meta.date)}</div>
               <h2>${escapeHtml(study.meta.title)}</h2>
             </div>
-            <span class="date-chip">${escapeHtml(study.meta.service)}</span>
+            <span class="date-chip">${escapeHtml(study.meta.type)}</span>
           </div>
           <p class="summary-card-copy">${escapeHtml(study.meta.summary)}</p>
           <div class="summary-card-meta">
@@ -256,12 +265,24 @@ function renderIndex(studies) {
             <input type="search" data-search placeholder="Tema, titulo ou texto-base" />
           </label>
           <label class="field">
+            <span>Tipo</span>
+            <select data-type>
+              <option value="">Todos</option>
+              ${types.map((type) => `<option value="${attr(type)}">${escapeHtml(type)}</option>`).join("")}
+            </select>
+          </label>
+          <label class="field">
             <span>Ano</span>
             <select data-year>
               <option value="">Todos</option>
-              ${[...new Set(studies.map((study) => study.meta.date.slice(0, 4)))]
-                .map((year) => `<option value="${year}">${year}</option>`)
-                .join("")}
+              ${years.map((year) => `<option value="${year}">${year}</option>`).join("")}
+            </select>
+          </label>
+          <label class="field">
+            <span>Mes</span>
+            <select data-month>
+              <option value="">Todos</option>
+              ${months.map((month) => `<option value="${month}">${monthName(month)}</option>`).join("")}
             </select>
           </label>
           <label class="field">
@@ -310,7 +331,7 @@ function renderStudy(study, previous, next) {
       <div class="topbar">
         <div class="brand">
           <a href="../../index.html" class="brand-link">Reader</a>
-          <span class="badge">${escapeHtml(study.meta.service)}</span>
+          <span class="badge">${escapeHtml(study.meta.type)}</span>
           <span class="badge">${formatDate(study.meta.date)}</span>
         </div>
         <div class="actions">
@@ -404,14 +425,18 @@ function bibleModal() {
 function indexScript() {
   return `
 const search = document.querySelector("[data-search]");
+const type = document.querySelector("[data-type]");
 const year = document.querySelector("[data-year]");
+const month = document.querySelector("[data-month]");
 const order = document.querySelector("[data-order]");
 const list = document.querySelector("[data-study-list]");
 const cards = Array.from(document.querySelectorAll("[data-study-card]"));
 
 function applyFilters() {
   const query = (search.value || "").toLowerCase();
+  const selectedType = type.value;
   const selectedYear = year.value;
+  const selectedMonth = month.value;
   const direction = order.value;
 
   cards
@@ -421,14 +446,16 @@ function applyFilters() {
     .forEach((card) => list.appendChild(card));
 
   cards.forEach((card) => {
-    const haystack = (card.textContent + " " + card.dataset.title + " " + card.dataset.tags).toLowerCase();
+    const haystack = (card.textContent + " " + card.dataset.title + " " + card.dataset.tags + " " + card.dataset.type).toLowerCase();
     const matchesQuery = !query || haystack.includes(query);
+    const matchesType = !selectedType || card.dataset.type === selectedType;
     const matchesYear = !selectedYear || card.dataset.date.startsWith(selectedYear);
-    card.hidden = !(matchesQuery && matchesYear);
+    const matchesMonth = !selectedMonth || card.dataset.date.slice(5, 7) === selectedMonth;
+    card.hidden = !(matchesQuery && matchesType && matchesYear && matchesMonth);
   });
 }
 
-[search, year, order].forEach((control) => control.addEventListener("input", applyFilters));
+[search, type, year, month, order].forEach((control) => control.addEventListener("input", applyFilters));
 applyFilters();
 `;
 }
@@ -489,6 +516,23 @@ const bookMap = {
   "2 Coríntios": "2 Corinthians"
 };
 
+const localBible = {
+  "Apocalipse 3:14-22": "<p><strong>14</strong> Ao anjo da igreja em Laodiceia escreva: Estas sao as palavras do Amem, a testemunha fiel e verdadeira, o soberano da criacao de Deus. <strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca. <strong>17</strong> Voce diz: Estou rico, adquiri riquezas e nao preciso de nada. Nao reconhece, porem, que e miseravel, digno de compaixao, pobre, cego e que esta nu. <strong>18</strong> Dou-lhe este conselho: Compre de mim ouro refinado no fogo e voce se tornara rico; compre roupas brancas e vista-se para cobrir a sua vergonhosa nudez; e compre colirio para ungir os seus olhos e poder enxergar. <strong>19</strong> Repreendo e disciplino aqueles que eu amo. Por isso, seja diligente e arrependa-se. <strong>20</strong> Eis que estou a porta e bato. Se alguem ouvir a minha voz e abrir a porta, entrarei e cearei com ele, e ele comigo. <strong>21</strong> Ao vencedor darei o direito de sentar-se comigo em meu trono, assim como eu tambem venci e sentei-me com meu Pai em seu trono. <strong>22</strong> Aquele que tem ouvidos ouca o que o Espirito diz as igrejas.</p>",
+  "Apocalipse 2:4-5": "<p><strong>4</strong> Contra voce, porem, tenho isto: voce abandonou o seu primeiro amor. <strong>5</strong> Lembre-se de onde caiu! Arrependa-se e pratique as obras que praticava no principio.</p>",
+  "Apocalipse 3:14-17": "<p><strong>14</strong> Ao anjo da igreja em Laodiceia escreva: Estas sao as palavras do Amem, a testemunha fiel e verdadeira, o soberano da criacao de Deus. <strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca. <strong>17</strong> Voce diz: Estou rico, adquiri riquezas e nao preciso de nada. Nao reconhece, porem, que e miseravel, digno de compaixao, pobre, cego e que esta nu.</p>",
+  "Apocalipse 3:15-16": "<p><strong>15</strong> Conheco as suas obras, sei que voce nao e frio nem quente. Melhor seria que voce fosse frio ou quente! <strong>16</strong> Assim, porque voce e morno, nem frio nem quente, estou a ponto de vomita-lo da minha boca.</p>",
+  "Mateus 7:21-23": "<p><strong>21</strong> Nem todo aquele que me diz: Senhor, Senhor, entrara no Reino dos ceus, mas apenas aquele que faz a vontade de meu Pai que esta nos ceus. <strong>23</strong> Entao eu lhes direi claramente: Nunca os conheci.</p>",
+  "Joao 15:1-8": "<p><strong>1</strong> Eu sou a videira verdadeira, e meu Pai e o agricultor. <strong>4</strong> Permanecam em mim, e eu permanecerei em voces. <strong>5</strong> Eu sou a videira; voces sao os ramos. Se alguem permanecer em mim e eu nele, esse dara muito fruto; pois sem mim voces nao podem fazer coisa alguma.</p>",
+  "Hebreus 12:5-11": "<p><strong>6</strong> O Senhor disciplina a quem ama. <strong>11</strong> Nenhuma disciplina parece ser motivo de alegria no momento, mas sim de tristeza. Mais tarde, porem, produz fruto de justica e paz para aqueles que por ela foram exercitados.</p>",
+  "Tiago 2:14-26": "<p><strong>26</strong> Assim como o corpo sem espirito esta morto, tambem a fe sem obras esta morta.</p>",
+  "1 Joao 5:3": "<p><strong>3</strong> Porque nisto consiste o amor a Deus: em obedecer aos seus mandamentos. E os seus mandamentos nao sao pesados.</p>",
+  "2 Corintios 5:14-15": "<p><strong>14</strong> Pois o amor de Cristo nos constrange. <strong>15</strong> E ele morreu por todos para que aqueles que vivem ja nao vivam mais para si mesmos, mas para aquele que por eles morreu e ressuscitou.</p>",
+  "Galatas 2:20": "<p><strong>20</strong> Fui crucificado com Cristo. Assim, ja nao sou eu quem vive, mas Cristo vive em mim.</p>",
+  "1 Pedro 1:6-9": "<p><strong>7</strong> Assim acontece para que fique comprovado que a fe que voces tem redundara em louvor, gloria e honra na revelacao de Jesus Cristo.</p>",
+  "Romanos 12:1-2": "<p><strong>1</strong> Oferecam-se em sacrificio vivo, santo e agradavel a Deus. <strong>2</strong> Nao se amoldem ao padrao deste mundo, mas transformem-se pela renovacao da sua mente.</p>",
+  "Lucas 9:23": "<p><strong>23</strong> Se alguem quiser acompanhar-me, negue-se a si mesmo, tome diariamente a sua cruz e siga-me.</p>"
+};
+
 document.querySelectorAll(".study-content li, .study-content p").forEach((el) => {
   el.innerHTML = el.innerHTML.replace(/\\b((?:[1-3]\\s)?[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-Za-zÁÉÍÓÚáéíóúÂÊÔâêôÃÕãõÇç]+)\\s+(\\d+)(?::(\\d+)(?:-(\\d+))?)?/g, (match, book) => {
     if (!bookMap[book] && !bookMap[book.replace(/\\s+/g, " ")]) return match;
@@ -514,6 +558,11 @@ document.addEventListener("click", async (event) => {
   modalTitle.textContent = ref;
   modalBody.innerHTML = "<p>Carregando texto biblico...</p>";
   modal.hidden = false;
+
+  if (localBible[ref]) {
+    modalBody.innerHTML = localBible[ref];
+    return;
+  }
 
   try {
     const response = await fetch("https://bible-api.com/" + query + "?translation=almeida");
@@ -553,6 +602,24 @@ function slugify(value) {
 function formatDate(value) {
   const [year, month, day] = value.split("-");
   return `${day}/${month}/${year}`;
+}
+
+function monthName(value) {
+  const names = {
+    "01": "Janeiro",
+    "02": "Fevereiro",
+    "03": "Marco",
+    "04": "Abril",
+    "05": "Maio",
+    "06": "Junho",
+    "07": "Julho",
+    "08": "Agosto",
+    "09": "Setembro",
+    "10": "Outubro",
+    "11": "Novembro",
+    "12": "Dezembro",
+  };
+  return names[value] || value;
 }
 
 function escapeHtml(value) {
