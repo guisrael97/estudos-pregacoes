@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v7";
+const assetVersion = "2026-05-09-v8";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -731,7 +731,7 @@ async function renderBibleText(ref, book) {
   const chapter = bibleBook.chapters[parsed.chapter - 1];
   if (!chapter) throw new Error("Capitulo nao encontrado");
 
-  const endVerse = parsed.endVerse || chapter.length;
+  const endVerse = parsed.endVerse || parsed.startVerse;
   const verses = chapter.slice(parsed.startVerse - 1, endVerse);
   if (!verses.length) throw new Error("Versiculo nao encontrado");
 
