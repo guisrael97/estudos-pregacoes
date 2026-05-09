@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Base de Estudos de Pregacoes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="page-glow page-glow-a"></div>
+  <div class="page-glow page-glow-b"></div>
+  <div class="container">
+    
+      <div class="topbar">
+        <div class="brand">
+          <a href="index.html" class="brand-link">Reader</a>
+          <span class="badge">Base de Estudos</span>
+        </div>
+        <div class="actions">
+          <a class="btn btn-ghost" href="studies/">Markdown</a>
+        </div>
+      </div>
+
+      <header class="hero hero-index">
+        <div class="hero-copy">
+          <div class="card-eyebrow">Estudos semanais</div>
+          <h1 class="hero-title">Base de estudos de pregacoes</h1>
+          <p class="hero-subtitle">Navegue pelos estudos organizados por data, tema e texto-base.</p>
+          <div class="hero-notes">
+            <div class="hero-note"><strong>Total:</strong> 1 estudo publicado.</div>
+            <div class="hero-note"><strong>Mais recente:</strong> 03/05/2026 - Morno nao da, volte ao Primeiro Amor</div>
+          </div>
+        </div>
+      </header>
+
+      <section class="card filter-card">
+        <div class="filter-grid">
+          <label class="field">
+            <span>Buscar</span>
+            <input type="search" data-search placeholder="Tema, titulo ou texto-base" />
+          </label>
+          <label class="field">
+            <span>Ano</span>
+            <select data-year>
+              <option value="">Todos</option>
+              <option value="2026">2026</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Ordem</span>
+            <select data-order>
+              <option value="desc">Mais recentes</option>
+              <option value="asc">Mais antigos</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <main class="summary-grid" data-study-list>
+        
+        <article class="summary-card" data-study-card data-title="Morno nao da, volte ao Primeiro Amor" data-tags="Apocalipse Primeiro Amor Mornidao" data-date="2026-05-03">
+          <div class="summary-card-top">
+            <div>
+              <div class="card-eyebrow">03/05/2026</div>
+              <h2>Morno nao da, volte ao Primeiro Amor</h2>
+            </div>
+            <span class="date-chip">Culto Noite</span>
+          </div>
+          <p class="summary-card-copy">Jesus confronta a mornidao nao para condenar, mas para restaurar amor, dependencia, intimidade e senhorio.</p>
+          <div class="summary-card-meta">
+            <span class="pill">Texto-base <strong>Apocalipse 3:14-22</strong></span>
+            <span class="pill">Apocalipse</span><span class="pill">Primeiro Amor</span><span class="pill">Mornidao</span>
+          </div>
+          <div class="summary-card-actions">
+            <a class="btn" href="estudos/2026-05-03/">Abrir estudo</a>
+          </div>
+        </article>
+      </main>
+      <script>
+const search = document.querySelector("[data-search]");
+const year = document.querySelector("[data-year]");
+const order = document.querySelector("[data-order]");
+const list = document.querySelector("[data-study-list]");
+const cards = Array.from(document.querySelectorAll("[data-study-card]"));
+
+function applyFilters() {
+  const query = (search.value || "").toLowerCase();
+  const selectedYear = year.value;
+  const direction = order.value;
+
+  cards
+    .sort((a, b) => direction === "asc"
+      ? a.dataset.date.localeCompare(b.dataset.date)
+      : b.dataset.date.localeCompare(a.dataset.date))
+    .forEach((card) => list.appendChild(card));
+
+  cards.forEach((card) => {
+    const haystack = (card.textContent + " " + card.dataset.title + " " + card.dataset.tags).toLowerCase();
+    const matchesQuery = !query || haystack.includes(query);
+    const matchesYear = !selectedYear || card.dataset.date.startsWith(selectedYear);
+    card.hidden = !(matchesQuery && matchesYear);
+  });
+}
+
+[search, year, order].forEach((control) => control.addEventListener("input", applyFilters));
+applyFilters();
+</script>
+  </div>
+</body>
+</html>

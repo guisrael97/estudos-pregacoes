@@ -1,0 +1,12 @@
+{
+  "name": "estudos-pregacoes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Base estatica para estudos semanais de pregacoes.",
+  "scripts": {
+    "build": "node scripts/build.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
