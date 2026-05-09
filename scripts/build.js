@@ -4,7 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
-const assetVersion = "2026-05-09-v11";
+const assetVersion = "2026-05-09-v12";
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -395,8 +395,18 @@ function renderIndex(studies) {
   const studyCards = studies
     .map((study) => {
       const tags = study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("");
+      const preacher = study.meta.preacher ? `<span class="pill">Pregador <strong>${escapeHtml(study.meta.preacher)}</strong></span>` : "";
+      const video = study.meta.videoUrl ? `<a class="pill pill-link" href="${attr(study.meta.videoUrl)}" target="_blank" rel="noopener noreferrer">YouTube</a>` : "";
+      const metaPills = [
+        `<span class="pill">Texto-base <strong>${escapeHtml(study.meta.baseText)}</strong></span>`,
+        preacher,
+        video,
+        tags,
+      ]
+        .filter(Boolean)
+        .join("\n");
       return `
-        <article class="summary-card" data-study-card data-title="${attr(study.meta.title)}" data-tags="${attr(study.meta.tags.join(" "))}" data-type="${attr(study.meta.type)}" data-date="${attr(study.meta.date)}">
+        <article class="summary-card" data-study-card data-title="${attr(study.meta.title)}" data-tags="${attr(study.meta.tags.join(" "))}" data-type="${attr(study.meta.type)}" data-date="${attr(study.meta.date)}" data-preacher="${attr(study.meta.preacher || "")}" data-video-url="${attr(study.meta.videoUrl || "")}">
           <div class="summary-card-top">
             <div>
               <div class="card-eyebrow">${formatDate(study.meta.date)}</div>
@@ -406,8 +416,7 @@ function renderIndex(studies) {
           </div>
           <p class="summary-card-copy">${escapeHtml(study.meta.summary)}</p>
           <div class="summary-card-meta">
-            <span class="pill">Texto-base <strong>${escapeHtml(study.meta.baseText)}</strong></span>
-            ${tags}
+            ${metaPills}
           </div>
           <div class="summary-card-actions">
             <a class="btn" href="${study.url}">Abrir estudo</a>
@@ -482,6 +491,11 @@ function renderIndex(studies) {
 }
 
 function renderStudy(study, previous, next) {
+  const preacher = study.meta.preacher ? `<span class="pill">Pregador <strong>${escapeHtml(study.meta.preacher)}</strong></span>` : "";
+  const video = study.meta.videoUrl ? `<a class="pill pill-link" href="${attr(study.meta.videoUrl)}" target="_blank" rel="noopener noreferrer">Ver no YouTube</a>` : "";
+  const heroPills = [preacher, video, study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")]
+    .filter(Boolean)
+    .join("\n");
   const sections = study.sections
     .map((section, index) => {
       const displayTitle = stripHeadingNumber(section.title);
@@ -517,7 +531,7 @@ function renderStudy(study, previous, next) {
           <h1 class="hero-title">${escapeHtml(study.meta.title)}</h1>
           <p class="hero-subtitle">${escapeHtml(study.meta.summary)}</p>
           <div class="hero-tags">
-            ${study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}
+            ${heroPills}
           </div>
         </div>
       </header>
@@ -616,7 +630,19 @@ function applyFilters() {
     .forEach((card) => list.appendChild(card));
 
   cards.forEach((card) => {
-    const haystack = (card.textContent + " " + card.dataset.title + " " + card.dataset.tags + " " + card.dataset.type).toLowerCase();
+    const haystack = (
+      card.textContent +
+      " " +
+      card.dataset.title +
+      " " +
+      card.dataset.tags +
+      " " +
+      card.dataset.type +
+      " " +
+      (card.dataset.preacher || "") +
+      " " +
+      (card.dataset.videoUrl || "")
+    ).toLowerCase();
     const matchesQuery = !query || haystack.includes(query);
     const matchesType = !selectedType || card.dataset.type === selectedType;
     const matchesYear = !selectedYear || card.dataset.date.startsWith(selectedYear);

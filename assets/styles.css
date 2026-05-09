@@ -190,6 +190,16 @@ select {
   margin-left: 0.3rem;
 }
 
+.pill-link {
+  color: var(--text);
+}
+
+.pill-link:hover,
+.pill-link:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--accent-soft);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
