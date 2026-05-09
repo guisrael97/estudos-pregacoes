@@ -762,12 +762,8 @@ select {
   grid-template-columns: 1fr;
 }
 
-.hero-study {
-  margin-bottom: 34px;
-}
-
-.hero-study + .toc {
-  margin-top: 0;
+.hero-study .hero-copy {
+  margin-bottom: 36px;
 }
 
 .hero-study .hero-subtitle {
