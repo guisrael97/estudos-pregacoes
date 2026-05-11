@@ -5,78 +5,79 @@ const root = path.resolve(__dirname, "..");
 const studiesDir = path.join(root, "studies");
 const outputDir = path.join(root, "estudos");
 const assetVersion = "2026-05-09-v14";
-const bibleBookNames = [
-  "1 Samuel",
-  "2 Samuel",
-  "1 Reis",
-  "2 Reis",
-  "1 CrÃ´nicas",
-  "2 CrÃ´nicas",
-  "1 CorÃ­ntios",
-  "2 CorÃ­ntios",
-  "1 Tessalonicenses",
-  "2 Tessalonicenses",
-  "1 TimÃ³teo",
-  "2 TimÃ³teo",
-  "1 Pedro",
-  "2 Pedro",
-  "1 JoÃ£o",
-  "2 JoÃ£o",
-  "3 JoÃ£o",
-  "GÃªnesis",
-  "ÃŠxodo",
-  "LevÃ­tico",
-  "NÃºmeros",
-  "DeuteronÃ´mio",
-  "JosuÃ©",
-  "JuÃ­zes",
-  "Rute",
-  "Esdras",
-  "Neemias",
-  "Ester",
-  "JÃ³",
-  "Salmos",
-  "Salmo",
-  "ProvÃ©rbios",
-  "Eclesiastes",
-  "Cantares",
-  "IsaÃ­as",
-  "Jeremias",
-  "LamentaÃ§Ãµes",
-  "Ezequiel",
-  "Daniel",
-  "Oseias",
-  "Joel",
-  "AmÃ³s",
-  "Obadias",
-  "Jonas",
-  "Miqueias",
-  "Naum",
-  "Habacuque",
-  "Sofonias",
-  "Ageu",
-  "Zacarias",
-  "Malaquias",
-  "Mateus",
-  "Marcos",
-  "Lucas",
-  "JoÃ£o",
-  "Atos",
-  "Romanos",
-  "GÃ¡latas",
-  "EfÃ©sios",
-  "Filipenses",
-  "Colossenses",
-  "Tito",
-  "Filemom",
-  "Hebreus",
-  "Tiago",
-  "Judas",
-  "Apocalipse",
+const bibleBookMatchers = [
+  { canonical: "1 Samuel", pattern: "1\\s*Samuel" },
+  { canonical: "2 Samuel", pattern: "2\\s*Samuel" },
+  { canonical: "1 Reis", pattern: "1\\s*Reis" },
+  { canonical: "2 Reis", pattern: "2\\s*Reis" },
+  { canonical: "1 Cr\u00f4nicas", pattern: "1\\s*Cr[o\\u00f4]nicas" },
+  { canonical: "2 Cr\u00f4nicas", pattern: "2\\s*Cr[o\\u00f4]nicas" },
+  { canonical: "1 Cor\u00edntios", pattern: "1\\s*Cor[i\\u00ed]ntios" },
+  { canonical: "2 Cor\u00edntios", pattern: "2\\s*Cor[i\\u00ed]ntios" },
+  { canonical: "1 Tessalonicenses", pattern: "1\\s*Tessalonicenses" },
+  { canonical: "2 Tessalonicenses", pattern: "2\\s*Tessalonicenses" },
+  { canonical: "1 Tim\u00f3teo", pattern: "1\\s*Tim[o\\u00f3]teo" },
+  { canonical: "2 Tim\u00f3teo", pattern: "2\\s*Tim[o\\u00f3]teo" },
+  { canonical: "1 Pedro", pattern: "1\\s*Pedro" },
+  { canonical: "2 Pedro", pattern: "2\\s*Pedro" },
+  { canonical: "1 Jo\u00e3o", pattern: "1\\s*Jo[a\\u00e3]o" },
+  { canonical: "2 Jo\u00e3o", pattern: "2\\s*Jo[a\\u00e3]o" },
+  { canonical: "3 Jo\u00e3o", pattern: "3\\s*Jo[a\\u00e3]o" },
+  { canonical: "G\u00eanesis", pattern: "G[e\\u00ea]nesis" },
+  { canonical: "\u00caxodo", pattern: "[E\\u00ca]xodo" },
+  { canonical: "Lev\u00edtico", pattern: "Lev[i\\u00ed]tico" },
+  { canonical: "N\u00fameros", pattern: "N[u\\u00fa]meros" },
+  { canonical: "Deuteron\u00f4mio", pattern: "Deuteron[o\\u00f4]mio" },
+  { canonical: "Josu\u00e9", pattern: "Josu[e\\u00e9]" },
+  { canonical: "Ju\u00edzes", pattern: "Ju[i\\u00ed]zes" },
+  { canonical: "Rute", pattern: "Rute" },
+  { canonical: "Esdras", pattern: "Esdras" },
+  { canonical: "Neemias", pattern: "Neemias" },
+  { canonical: "Ester", pattern: "Ester" },
+  { canonical: "J\u00f3", pattern: "J[o\\u00f3]" },
+  { canonical: "Salmos", pattern: "Salmos" },
+  { canonical: "Salmo", pattern: "Salmo" },
+  { canonical: "Prov\u00e9rbios", pattern: "Prov[e\\u00e9]rbios" },
+  { canonical: "Eclesiastes", pattern: "Eclesiastes" },
+  { canonical: "Cantares", pattern: "Cantares" },
+  { canonical: "Isa\u00edas", pattern: "Isa[i\\u00ed]as" },
+  { canonical: "Jeremias", pattern: "Jeremias" },
+  { canonical: "Lamenta\u00e7\u00f5es", pattern: "Lamenta[c\\u00e7][o\\u00f5]es" },
+  { canonical: "Ezequiel", pattern: "Ezequiel" },
+  { canonical: "Daniel", pattern: "Daniel" },
+  { canonical: "Oseias", pattern: "Oseias" },
+  { canonical: "Joel", pattern: "Joel" },
+  { canonical: "Am\u00f3s", pattern: "Am[o\\u00f3]s" },
+  { canonical: "Obadias", pattern: "Obadias" },
+  { canonical: "Jonas", pattern: "Jonas" },
+  { canonical: "Miqueias", pattern: "Miqueias" },
+  { canonical: "Naum", pattern: "Naum" },
+  { canonical: "Habacuque", pattern: "Habacuque" },
+  { canonical: "Sofonias", pattern: "Sofonias" },
+  { canonical: "Ageu", pattern: "Ageu" },
+  { canonical: "Zacarias", pattern: "Zacarias" },
+  { canonical: "Malaquias", pattern: "Malaquias" },
+  { canonical: "Mateus", pattern: "Mateus" },
+  { canonical: "Marcos", pattern: "Marcos" },
+  { canonical: "Lucas", pattern: "Lucas" },
+  { canonical: "Jo\u00e3o", pattern: "Jo[a\\u00e3]o" },
+  { canonical: "Atos", pattern: "Atos" },
+  { canonical: "Romanos", pattern: "Romanos" },
+  { canonical: "G\u00e1latas", pattern: "G[a\\u00e1]latas" },
+  { canonical: "Ef\u00e9sios", pattern: "Ef[e\\u00e9]sios" },
+  { canonical: "Filipenses", pattern: "Filipenses" },
+  { canonical: "Colossenses", pattern: "Colossenses" },
+  { canonical: "Tito", pattern: "Tito" },
+  { canonical: "Filemom", pattern: "Filemom" },
+  { canonical: "Hebreus", pattern: "Hebreus" },
+  { canonical: "Tiago", pattern: "Tiago" },
+  { canonical: "Judas", pattern: "Judas" },
+  { canonical: "Apocalipse", pattern: "Apocalipse" },
 ];
-const bibleBookPattern = bibleBookNames
-  .sort((a, b) => b.length - a.length)
-  .map((book) => book.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"))
+const bibleBookCanonicalByName = Object.fromEntries(bibleBookMatchers.map((book) => [normalizeText(book.canonical), book.canonical]));
+const bibleBookPattern = bibleBookMatchers
+  .sort((a, b) => b.canonical.length - a.canonical.length)
+  .map((book) => book.pattern.replace(/\s+/g, "\\s+"))
   .join("|");
 
 function ensureDir(dir) {
@@ -384,7 +385,7 @@ function linkBibleReferences(html) {
       if (!part || part.startsWith("<")) return part;
 
       return part.replace(
-        new RegExp(`(?<![\\p{L}\\d])(${bibleBookPattern})\\s+(\\d+(?::\\d+(?:-\\d+)?)?)|((?:\\s+(?:e|,|;)\\s*|\\s*[,;]\\s*)(\\d+(?::\\d+(?:-\\d+)?)?))`, "giu"),
+        new RegExp(`(?<![\\p{L}\\d])(${bibleBookPattern})\\s+(\\d+(?:-\\d+|:\\d+(?:-\\d+)?)?)|((?:\\s+(?:e|,|;)\\s*|\\s*[,;]\\s*)(\\d+(?:-\\d+|:\\d+(?:-\\d+)?)?))`, "giu"),
         (match, book, detail, continuation, continuationDetail) => {
           if (book && detail) {
             contextBook = normalizeBookLabel(book);
@@ -414,7 +415,8 @@ function linkBibleReferences(html) {
 }
 
 function normalizeBookLabel(book) {
-  return book.replace(/\s+/g, " ").trim();
+  const normalized = normalizeText(book);
+  return bibleBookCanonicalByName[normalized] || book.replace(/\s+/g, " ").trim();
 }
 
 function bibleReferenceMarkup(ref, book, label) {
@@ -554,6 +556,10 @@ function renderMapSection(section) {
             <article class="mapa-item">
               <div class="card-eyebrow">Ponto ${index + 1}</div>
               <h3>${escapeHtml(title)}</h3>
+              <div class="mini-card teaching">
+                <div class="mini-label">Ensino</div>
+                <div class="mini-text">${teaching || "—"}</div>
+              </div>
               <div class="mapa-grid">
                 <div class="mini-card">
                   <div class="mini-label">Âncora</div>
@@ -567,10 +573,6 @@ function renderMapSection(section) {
                   <div class="mini-label">Frase-chave</div>
                   <div class="mini-text">${keyResult.value || "—"}</div>
                 </div>
-              </div>
-              <div class="mini-card teaching">
-                <div class="mini-label">Ensino</div>
-                <div class="mini-text">${teaching || "—"}</div>
               </div>
             </article>`;
         })
@@ -832,6 +834,20 @@ function renderStudy(study, previous, next) {
   });
 }
 
+function validateRenderedBibleLinks(study, html) {
+  const textWithoutLinkedRefs = html
+    .replace(/<script[\s\S]*?<\/script>/g, " ")
+    .replace(/<span class="ref-link"[\s\S]*?<\/span>/g, " ")
+    .replace(/<[^>]+>/g, " ");
+  const referencePattern = new RegExp(`(?<![\\p{L}\\d])(${bibleBookPattern})\\s+\\d+(?:-\\d+|:\\d+(?:-\\d+)?)?`, "giu");
+  const missed = [...textWithoutLinkedRefs.matchAll(referencePattern)].map((match) => match[0].replace(/\s+/g, " ").trim());
+  const uniqueMissed = [...new Set(missed)];
+
+  if (uniqueMissed.length) {
+    throw new Error(`Referencias sem popup em ${study.meta.date} - ${study.meta.title}: ${uniqueMissed.join(", ")}`);
+  }
+}
+
 function pageShell({ title, assetPrefix, body }) {
   return `<!doctype html>
 <html lang="pt-BR">
@@ -1028,14 +1044,15 @@ function escapeText(value) {
 
 function parseBibleReference(ref, book) {
   const code = bookCode(book);
-  const detail = ref.slice(book.length).trim().match(/^(\\d+)(?::(\\d+)(?:-(\\d+))?)?$/);
+  const detail = ref.slice(book.length).trim().match(/^(\\d+)(?:(?::(\\d+)(?:-(\\d+))?)|-(\\d+))?$/);
   if (!code || !detail) return null;
 
   return {
     code,
     chapter: Number(detail[1]),
     startVerse: detail[2] ? Number(detail[2]) : null,
-    endVerse: detail[3] ? Number(detail[3]) : null
+    endVerse: detail[3] ? Number(detail[3]) : null,
+    endChapter: detail[4] ? Number(detail[4]) : null
   };
 }
 
@@ -1054,6 +1071,20 @@ async function renderBibleText(ref, book) {
   if (!parsed) throw new Error("Referencia invalida");
 
   const bibleBook = await fetchBibleBook(parsed.code);
+  if (parsed.endChapter && !parsed.startVerse) {
+    const chapters = bibleBook.chapters.slice(parsed.chapter - 1, parsed.endChapter);
+    if (!chapters.length) throw new Error("Capitulo nao encontrado");
+
+    return chapters
+      .map((chapter, chapterIndex) => {
+        const chapterNumber = parsed.chapter + chapterIndex;
+        return "<h4>Capitulo " + chapterNumber + "</h4>" + chapter
+          .map((text, verseIndex) => "<p><strong>" + chapterNumber + ":" + (verseIndex + 1) + "</strong> " + escapeText(text) + "</p>")
+          .join("");
+      })
+      .join("");
+  }
+
   const chapter = bibleBook.chapters[parsed.chapter - 1];
   if (!chapter) throw new Error("Capitulo nao encontrado");
 
@@ -1101,8 +1132,10 @@ function writeSite(studies) {
     const previous = studies[index + 1];
     const next = studies[index - 1];
     const dir = path.join(outputDir, study.slug);
+    const html = renderStudy(study, previous, next);
+    validateRenderedBibleLinks(study, html);
     ensureDir(dir);
-    fs.writeFileSync(path.join(dir, "index.html"), renderStudy(study, previous, next));
+    fs.writeFileSync(path.join(dir, "index.html"), html);
   });
 
   fs.writeFileSync(path.join(root, "index.html"), renderIndex(studies));

@@ -89,6 +89,10 @@
             <article class="mapa-item">
               <div class="card-eyebrow">Ponto 1</div>
               <h3>Deus chama pessoas disponíveis</h3>
+              <div class="mini-card teaching">
+                <div class="mini-label">Ensino</div>
+                <div class="mini-text">Elias aparece vindo de Tisbe, um lugar sem grande destaque. A mensagem destaca que Deus não depende da origem, reputação ou currículo de alguém para cumprir seu propósito.</div>
+              </div>
               <div class="mapa-grid">
                 <div class="mini-card">
                   <div class="mini-label">Âncora</div>
@@ -103,15 +107,15 @@
                   <div class="mini-text">Se Deus chamou você, sua origem não anula seu propósito.</div>
                 </div>
               </div>
-              <div class="mini-card teaching">
-                <div class="mini-label">Ensino</div>
-                <div class="mini-text">Elias aparece vindo de Tisbe, um lugar sem grande destaque. A mensagem destaca que Deus não depende da origem, reputação ou currículo de alguém para cumprir seu propósito.</div>
-              </div>
             </article>
 
             <article class="mapa-item">
               <div class="card-eyebrow">Ponto 2</div>
               <h3>O legado público nasce do processo secreto</h3>
+              <div class="mini-card teaching">
+                <div class="mini-label">Ensino</div>
+                <div class="mini-text">Antes do confronto público, Elias foi conduzido a um lugar de dependência, sustentado por corvos e por uma torrente. Deus formou o profeta no escondido antes de usá-lo diante de todos.</div>
+              </div>
               <div class="mapa-grid">
                 <div class="mini-card">
                   <div class="mini-label">Âncora</div>
@@ -126,15 +130,15 @@
                   <div class="mini-text">Grandes legados exigem grandes processos.</div>
                 </div>
               </div>
-              <div class="mini-card teaching">
-                <div class="mini-label">Ensino</div>
-                <div class="mini-text">Antes do confronto público, Elias foi conduzido a um lugar de dependência, sustentado por corvos e por uma torrente. Deus formou o profeta no escondido antes de usá-lo diante de todos.</div>
-              </div>
             </article>
 
             <article class="mapa-item">
               <div class="card-eyebrow">Ponto 3</div>
               <h3>A provisão diária também é milagre</h3>
+              <div class="mini-card teaching">
+                <div class="mini-label">Ensino</div>
+                <div class="mini-text">Na casa da viúva, a farinha e o azeite não apareceram como abundância imediata, mas como fidelidade diária. A mensagem lembra que o ordinário também revela o cuidado de Deus.</div>
+              </div>
               <div class="mapa-grid">
                 <div class="mini-card">
                   <div class="mini-label">Âncora</div>
@@ -149,15 +153,15 @@
                   <div class="mini-text">Nem todo milagre faz barulho; alguns se repetem todos os dias.</div>
                 </div>
               </div>
-              <div class="mini-card teaching">
-                <div class="mini-label">Ensino</div>
-                <div class="mini-text">Na casa da viúva, a farinha e o azeite não apareceram como abundância imediata, mas como fidelidade diária. A mensagem lembra que o ordinário também revela o cuidado de Deus.</div>
-              </div>
             </article>
 
             <article class="mapa-item">
               <div class="card-eyebrow">Ponto 4</div>
               <h3>O fogo cai para Deus ser reconhecido</h3>
+              <div class="mini-card teaching">
+                <div class="mini-label">Ensino</div>
+                <div class="mini-text">No confronto com os profetas de Baal, Elias ora para que o povo reconheça que o Senhor é Deus. O milagre não aponta para a grandeza do profeta, mas para a glória do Senhor.</div>
+              </div>
               <div class="mapa-grid">
                 <div class="mini-card">
                   <div class="mini-label">Âncora</div>
@@ -172,15 +176,15 @@
                   <div class="mini-text">O fogo cai para que Deus seja reconhecido, não para que o homem seja aplaudido.</div>
                 </div>
               </div>
-              <div class="mini-card teaching">
-                <div class="mini-label">Ensino</div>
-                <div class="mini-text">No confronto com os profetas de Baal, Elias ora para que o povo reconheça que o Senhor é Deus. O milagre não aponta para a grandeza do profeta, mas para a glória do Senhor.</div>
-              </div>
             </article>
 
             <article class="mapa-item">
               <div class="card-eyebrow">Ponto 5</div>
               <h3>Legado é presença replicada em outras vidas</h3>
+              <div class="mini-card teaching">
+                <div class="mini-label">Ensino</div>
+                <div class="mini-text">Eliseu pede porção dobrada porque reconhece a presença de Deus na vida de Elias. O legado de Elias não termina nele; continua em outra vida marcada pela presença.</div>
+              </div>
               <div class="mapa-grid">
                 <div class="mini-card">
                   <div class="mini-label">Âncora</div>
@@ -194,10 +198,6 @@
                   <div class="mini-label">Frase-chave</div>
                   <div class="mini-text">A presença que recebemos precisa se tornar legado para outros.</div>
                 </div>
-              </div>
-              <div class="mini-card teaching">
-                <div class="mini-label">Ensino</div>
-                <div class="mini-text">Eliseu pede porção dobrada porque reconhece a presença de Deus na vida de Elias. O legado de Elias não termina nele; continua em outra vida marcada pela presença.</div>
               </div>
             </article>
     </div>
@@ -370,14 +370,15 @@ function escapeText(value) {
 
 function parseBibleReference(ref, book) {
   const code = bookCode(book);
-  const detail = ref.slice(book.length).trim().match(/^(\d+)(?::(\d+)(?:-(\d+))?)?$/);
+  const detail = ref.slice(book.length).trim().match(/^(\d+)(?:(?::(\d+)(?:-(\d+))?)|-(\d+))?$/);
   if (!code || !detail) return null;
 
   return {
     code,
     chapter: Number(detail[1]),
     startVerse: detail[2] ? Number(detail[2]) : null,
-    endVerse: detail[3] ? Number(detail[3]) : null
+    endVerse: detail[3] ? Number(detail[3]) : null,
+    endChapter: detail[4] ? Number(detail[4]) : null
   };
 }
 
@@ -396,6 +397,20 @@ async function renderBibleText(ref, book) {
   if (!parsed) throw new Error("Referencia invalida");
 
   const bibleBook = await fetchBibleBook(parsed.code);
+  if (parsed.endChapter && !parsed.startVerse) {
+    const chapters = bibleBook.chapters.slice(parsed.chapter - 1, parsed.endChapter);
+    if (!chapters.length) throw new Error("Capitulo nao encontrado");
+
+    return chapters
+      .map((chapter, chapterIndex) => {
+        const chapterNumber = parsed.chapter + chapterIndex;
+        return "<h4>Capitulo " + chapterNumber + "</h4>" + chapter
+          .map((text, verseIndex) => "<p><strong>" + chapterNumber + ":" + (verseIndex + 1) + "</strong> " + escapeText(text) + "</p>")
+          .join("");
+      })
+      .join("");
+  }
+
   const chapter = bibleBook.chapters[parsed.chapter - 1];
   if (!chapter) throw new Error("Capitulo nao encontrado");
 
