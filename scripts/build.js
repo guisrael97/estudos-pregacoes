@@ -1,4 +1,4 @@
-const fs = require("node:fs");
+﻿const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
@@ -10,44 +10,44 @@ const bibleBookNames = [
   "2 Samuel",
   "1 Reis",
   "2 Reis",
-  "1 Crônicas",
-  "2 Crônicas",
-  "1 Coríntios",
-  "2 Coríntios",
+  "1 CrÃ´nicas",
+  "2 CrÃ´nicas",
+  "1 CorÃ­ntios",
+  "2 CorÃ­ntios",
   "1 Tessalonicenses",
   "2 Tessalonicenses",
-  "1 Timóteo",
-  "2 Timóteo",
+  "1 TimÃ³teo",
+  "2 TimÃ³teo",
   "1 Pedro",
   "2 Pedro",
-  "1 João",
-  "2 João",
-  "3 João",
-  "Gênesis",
-  "Êxodo",
-  "Levítico",
-  "Números",
-  "Deuteronômio",
-  "Josué",
-  "Juízes",
+  "1 JoÃ£o",
+  "2 JoÃ£o",
+  "3 JoÃ£o",
+  "GÃªnesis",
+  "ÃŠxodo",
+  "LevÃ­tico",
+  "NÃºmeros",
+  "DeuteronÃ´mio",
+  "JosuÃ©",
+  "JuÃ­zes",
   "Rute",
   "Esdras",
   "Neemias",
   "Ester",
-  "Jó",
+  "JÃ³",
   "Salmos",
   "Salmo",
-  "Provérbios",
+  "ProvÃ©rbios",
   "Eclesiastes",
   "Cantares",
-  "Isaías",
+  "IsaÃ­as",
   "Jeremias",
-  "Lamentações",
+  "LamentaÃ§Ãµes",
   "Ezequiel",
   "Daniel",
   "Oseias",
   "Joel",
-  "Amós",
+  "AmÃ³s",
   "Obadias",
   "Jonas",
   "Miqueias",
@@ -60,11 +60,11 @@ const bibleBookNames = [
   "Mateus",
   "Marcos",
   "Lucas",
-  "João",
+  "JoÃ£o",
   "Atos",
   "Romanos",
-  "Gálatas",
-  "Efésios",
+  "GÃ¡latas",
+  "EfÃ©sios",
   "Filipenses",
   "Colossenses",
   "Tito",
@@ -114,11 +114,13 @@ function parseMarkdownFile(source) {
   const body = source.slice(frontMatter[0].length).trim();
 
   validateMeta(meta);
+  const sections = splitSections(body);
+  validateStudyShape(meta, sections);
 
   return {
     meta,
     body,
-    sections: splitSections(body),
+    sections,
   };
 }
 
@@ -164,6 +166,90 @@ function validateMeta(meta) {
 
   meta.service = meta.service || meta.type;
   if (!Array.isArray(meta.tags)) meta.tags = [];
+}
+
+function validateStudyShape(meta, sections) {
+  const required = [
+    "texto base e tema",
+    "tese central",
+    "caminho da mensagem",
+    "mapa biblico da mensagem",
+    "verdades para guardar",
+    "para praticar na semana",
+    "perguntas para meditar",
+    "leituras da semana",
+    "oracao guiada",
+  ];
+  const forbidden = [
+    "referencias biblicas",
+    "fluxo da mensagem",
+    "verdades centrais da mensagem",
+    "aplicacoes praticas",
+    "perguntas para revisao",
+    "reflexoes praticas",
+    "acoes praticas da semana",
+    "frases marcantes da mensagem",
+    "diario espiritual",
+  ];
+  const titles = sections.map((section) => normalizeText(stripHeadingNumber(section.title)));
+  const missing = required.filter((title) => !titles.includes(title));
+  const legacy = titles.filter((title) => forbidden.includes(title));
+  const errors = [];
+
+  if (missing.length) errors.push(`secoes obrigatorias ausentes: ${missing.join(", ")}`);
+  if (legacy.length) errors.push(`secoes antigas removidas pelo novo prompt: ${legacy.join(", ")}`);
+
+  const mapSection = findSection(sections, "mapa biblico da mensagem");
+  if (mapSection) {
+    const points = splitSubsections(mapSection.content.join("\n"));
+    if (points.length < 3 || points.length > 5) errors.push(`mapa biblico precisa ter entre 3 e 5 pontos; encontrou ${points.length}`);
+    points.forEach((point, index) => {
+      ["Ancora biblica", "Ensino", "Aplicacao", "Frase-chave"].forEach((label) => {
+        if (!extractNamedLine(point.content, label).value) {
+          errors.push(`ponto ${index + 1} do mapa nao tem "${label}"`);
+        }
+      });
+    });
+  }
+
+  const truths = countListItems(findSection(sections, "verdades para guardar"));
+  if (truths > 5) errors.push(`verdades para guardar deve ter no maximo 5 itens; encontrou ${truths}`);
+
+  const actions = countListItems(findSection(sections, "para praticar na semana"));
+  if (actions !== 3) errors.push(`para praticar na semana deve ter exatamente 3 acoes; encontrou ${actions}`);
+
+  const questions = countListItems(findSection(sections, "perguntas para meditar"));
+  if (questions !== 3) errors.push(`perguntas para meditar deve ter exatamente 3 perguntas; encontrou ${questions}`);
+
+  const readings = countListItems(findSection(sections, "leituras da semana"));
+  if (readings > 4) errors.push(`leituras da semana deve ter no maximo 4 leituras; encontrou ${readings}`);
+
+  const thesis = findSection(sections, "tese central");
+  if (thesis) {
+    const paragraphs = thesis.content.map((line) => line.trim()).filter(Boolean).length;
+    if (paragraphs > 2) errors.push(`tese central deve ter no maximo 2 paragrafos curtos; encontrou ${paragraphs}`);
+  }
+
+  const pathSection = findSection(sections, "caminho da mensagem");
+  if (pathSection) {
+    const text = normalizeText(pathSection.content.join("\n"));
+    ["o problema apresentado", "o confronto de deus", "a resposta esperada"].forEach((label) => {
+      if (!text.includes(label)) errors.push(`caminho da mensagem nao tem "${label}"`);
+    });
+  }
+
+  if (errors.length) {
+    throw new Error(`Estudo fora do novo padrao editorial (${meta.date} - ${meta.title}):\n- ${errors.join("\n- ")}`);
+  }
+}
+
+function findSection(sections, normalizedTitle) {
+  return sections.find((section) => normalizeText(stripHeadingNumber(section.title)) === normalizedTitle);
+}
+
+function countListItems(section) {
+  if (!section) return 0;
+  return section.content.filter((line) => /^\s*(?:[-*]|\d+\.)\s+/.test(line)).length;
 }
 
 function splitSections(markdown) {
@@ -368,7 +454,7 @@ function linesToListItems(lines) {
 }
 
 function renderList(items) {
-  if (!items.length) return '<p class="muted">—</p>';
+  if (!items.length) return '<p class="muted">â€”</p>';
   return `<ul class="list">${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 }
 
@@ -378,6 +464,31 @@ function extractLabelValue(lines, labelPattern) {
 
   const line = lines[index].trim();
   const value = line.replace(labelPattern, "").trim();
+  return {
+    value: inlineMarkdown(value),
+    lines: lines.filter((_, lineIndex) => lineIndex !== index),
+  };
+}
+
+function normalizeText(value) {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^\p{L}\d]+/gu, " ")
+    .trim();
+}
+
+function extractNamedLine(lines, label) {
+  const target = normalizeText(label);
+  const index = lines.findIndex((line) => {
+    const match = line.trim().match(/^\*\*(.+?):\*\*/);
+    return match && normalizeText(match[1]) === target;
+  });
+  if (index === -1) return { value: "", lines };
+
+  const line = lines[index].trim();
+  const value = line.replace(/^\*\*.+?:\*\*\s*/, "").trim();
   return {
     value: inlineMarkdown(value),
     lines: lines.filter((_, lineIndex) => lineIndex !== index),
@@ -395,11 +506,11 @@ function renderReferencesSection(section) {
       </div>`;
   });
 
-  if (!groups.some((group) => stripHeadingNumber(group.title).toLowerCase() === "implícitas" || stripHeadingNumber(group.title).toLowerCase() === "implicitas")) {
+  if (!groups.some((group) => stripHeadingNumber(group.title).toLowerCase() === "implÃ­citas" || stripHeadingNumber(group.title).toLowerCase() === "implicitas")) {
     cards.push(`
       <div class="mini-card">
-        <div class="mini-label">Implícitas</div>
-        <p class="muted">—</p>
+        <div class="mini-label">ImplÃ­citas</div>
+        <p class="muted">â€”</p>
       </div>`);
   }
 
@@ -429,11 +540,15 @@ function renderMapSection(section) {
         .map((point, index) => {
           const title = stripHeadingNumber(point.title).replace(/^Ponto\s+\d+:\s*/i, "");
           let lines = point.content.map((line) => line.trim()).filter(Boolean);
-          const anchorResult = extractLabelValue(lines, /^\*\*Âncora bíblica:\*\*\s*/i);
+          const anchorResult = extractNamedLine(lines, "Ancora biblica");
           lines = anchorResult.lines;
-          const keyResult = extractLabelValue(lines, /^\*\*Frase-chave:\*\*\s*/i);
-          lines = keyResult.lines.filter((line) => !/^Uma frase forte da pregação foi:?$/i.test(line));
-          const teaching = markdownToHtml(lines.join("\n").trim());
+          const teachingResult = extractNamedLine(lines, "Ensino");
+          lines = teachingResult.lines;
+          const applicationResult = extractNamedLine(lines, "Aplicacao");
+          lines = applicationResult.lines;
+          const keyResult = extractNamedLine(lines, "Frase-chave");
+          lines = keyResult.lines.filter((line) => !/^Uma frase forte da pregacao foi:?$/i.test(normalizeText(line)));
+          const teaching = teachingResult.value || markdownToHtml(lines.join("\n").trim());
 
           return `
             <article class="mapa-item">
@@ -443,6 +558,10 @@ function renderMapSection(section) {
                 <div class="mini-card">
                   <div class="mini-label">Âncora</div>
                   <div class="mini-text">${anchorResult.value || "—"}</div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-label">Aplicação</div>
+                  <div class="mini-text">${applicationResult.value || "—"}</div>
                 </div>
                 <div class="mini-card">
                   <div class="mini-label">Frase-chave</div>
@@ -461,7 +580,7 @@ function renderMapSection(section) {
 
 function renderReadingsSection(section) {
   const groups = splitSubsections(section.content.join("\n"));
-  if (!groups.length) return markdownToHtml(section.content.join("\n").trim());
+  if (!groups.length || groups.every((group) => !group.title)) return markdownToHtml(section.content.join("\n").trim());
 
   return `
     <div class="refs-grid">
@@ -476,9 +595,9 @@ function renderReadingsSection(section) {
 }
 
 function renderSectionContent(section) {
-  const title = stripHeadingNumber(section.title).toLowerCase();
+  const title = normalizeText(stripHeadingNumber(section.title));
 
-  if (title.includes("referências bíblicas") || title.includes("referencias biblicas")) {
+  if (title.includes("referencias biblicas")) {
     return renderReferencesSection(section);
   }
 
@@ -486,25 +605,25 @@ function renderSectionContent(section) {
     return renderFlowSection(section);
   }
 
-  if (title.includes("mapa bíblia") || title.includes("mapa biblia")) {
+  if (title.includes("mapa biblico") || title.includes("mapa biblia")) {
     return renderMapSection(section);
   }
 
-  if (title.includes("leituras complementares")) {
+  if (title.includes("leituras complementares") || title.includes("leituras da semana")) {
     return renderReadingsSection(section);
   }
 
-  return `<div class="prose${title.includes("tese central") || title.includes("oração") || title.includes("oracao") ? " lead" : ""} study-content">
+  return `<div class="prose${title.includes("tese central") || title.includes("oracao") ? " lead" : ""} study-content">
     ${markdownToHtml(section.content.join("\n").trim())}
   </div>`;
 }
 
 function sectionClassFor(section, index) {
-  const title = stripHeadingNumber(section.title).toLowerCase();
+  const title = normalizeText(stripHeadingNumber(section.title));
   const classes = ["section"];
   if (index === 0) classes.push("section-anchor");
-  if (title.includes("tese central") || title.includes("oração") || title.includes("oracao")) classes.push("section-thesis");
-  if (title.includes("aplicações") || title.includes("aplicacoes") || title.includes("ações práticas") || title.includes("acoes praticas")) classes.push("section-action");
+  if (title.includes("tese central") || title.includes("oracao")) classes.push("section-thesis");
+  if (title.includes("para praticar")) classes.push("section-action");
   return classes.join(" ");
 }
 
