@@ -566,12 +566,12 @@ function renderMapSection(section) {
                   <div class="mini-text">${anchorResult.value || "—"}</div>
                 </div>
                 <div class="mini-card">
-                  <div class="mini-label">Aplicação</div>
-                  <div class="mini-text">${applicationResult.value || "—"}</div>
-                </div>
-                <div class="mini-card">
                   <div class="mini-label">Frase-chave</div>
                   <div class="mini-text">${keyResult.value || "—"}</div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-label">Aplicação</div>
+                  <div class="mini-text">${applicationResult.value || "—"}</div>
                 </div>
               </div>
             </article>`;

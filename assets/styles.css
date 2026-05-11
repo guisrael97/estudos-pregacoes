@@ -656,7 +656,11 @@ select {
 }
 
 .teaching {
-  margin-top: 12px;
+  margin: 18px 0 20px;
+}
+
+.mapa-item .mapa-grid {
+  gap: 18px;
 }
 
 .mapa-item,
