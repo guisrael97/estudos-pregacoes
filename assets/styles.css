@@ -808,9 +808,6 @@ select {
     gap: 14px;
   }
 
-  .back-to-top {
-    display: none;
-  }
 }
 
 /* Project overrides for the generated multi-study site. */
