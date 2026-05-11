@@ -638,17 +638,19 @@ function renderIndex(studies) {
     .map((study) => {
       const tags = study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("");
       const preacher = study.meta.preacher ? `<span class="pill">Pregador <strong>${escapeHtml(study.meta.preacher)}</strong></span>` : "";
+      const series = study.meta.series ? `<span class="pill">Série <strong>${escapeHtml(study.meta.series)}</strong></span>` : "";
       const video = study.meta.videoUrl ? `<a class="pill pill-link" href="${attr(study.meta.videoUrl)}" target="_blank" rel="noopener noreferrer">YouTube</a>` : "";
       const metaPills = [
         `<span class="pill">Texto-base <strong>${escapeHtml(study.meta.baseText)}</strong></span>`,
         preacher,
+        series,
         video,
         tags,
       ]
         .filter(Boolean)
         .join("\n");
       return `
-        <article class="summary-card" data-study-card data-title="${attr(study.meta.title)}" data-tags="${attr(study.meta.tags.join(" "))}" data-type="${attr(study.meta.type)}" data-date="${attr(study.meta.date)}" data-preacher="${attr(study.meta.preacher || "")}" data-video-url="${attr(study.meta.videoUrl || "")}">
+        <article class="summary-card" data-study-card data-title="${attr(study.meta.title)}" data-tags="${attr(study.meta.tags.join(" "))}" data-type="${attr(study.meta.type)}" data-date="${attr(study.meta.date)}" data-preacher="${attr(study.meta.preacher || "")}" data-series="${attr(study.meta.series || "")}" data-video-url="${attr(study.meta.videoUrl || "")}">
           <div class="summary-card-top">
             <div>
               <div class="card-eyebrow">${formatDate(study.meta.date)}</div>
@@ -760,8 +762,9 @@ function aboutModal() {
 
 function renderStudy(study, previous, next) {
   const preacher = study.meta.preacher ? `<span class="pill">Pregador <strong>${escapeHtml(study.meta.preacher)}</strong></span>` : "";
+  const series = study.meta.series ? `<span class="pill">Série <strong>${escapeHtml(study.meta.series)}</strong></span>` : "";
   const video = study.meta.videoUrl ? `<a class="pill pill-link" href="${attr(study.meta.videoUrl)}" target="_blank" rel="noopener noreferrer">Ver no YouTube</a>` : "";
-  const heroPills = [preacher, video, study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")]
+  const heroPills = [preacher, series, video, study.meta.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")]
     .filter(Boolean)
     .join("\n");
   const sections = study.sections
@@ -925,6 +928,8 @@ function applyFilters() {
       card.dataset.type +
       " " +
       (card.dataset.preacher || "") +
+      " " +
+      (card.dataset.series || "") +
       " " +
       (card.dataset.videoUrl || "")
     ).toLowerCase();
