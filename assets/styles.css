@@ -916,6 +916,36 @@ select {
   padding-right: 8px;
 }
 
+#bible-modal-body .bible-version {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+#bible-modal-body p {
+  margin: 0 0 0.85rem;
+}
+
+#bible-modal-body .v {
+  color: var(--accent);
+  font-size: 0.78em;
+  font-weight: 900;
+  margin-right: 0.35rem;
+  vertical-align: super;
+}
+
+#bible-modal-body .bible-copyright {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
 .about-modal-body {
   color: var(--muted);
   overflow-y: auto;

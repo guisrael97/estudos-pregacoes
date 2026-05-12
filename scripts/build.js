@@ -1005,29 +1005,34 @@ function normalizeReference(ref) {
     .normalize("NFD")
     .replace(/[\\u0300-\\u036f]/g, "");
 }
+const BIBLE_API_BASE_URL = "https://rest.api.bible/v1";
+const BIBLE_API_KEY = "k1V06uBrpkVWVeae3u8au";
+const BIBLE_ID = "41a6caa722a21d88-01";
+const BIBLE_VERSION_LABEL = "Nova Versão Transformadora (NVT)";
+
       const bibleBookCodes = {
-        "genesis": "gn", "gn": "gn", "exodo": "ex", "ex": "ex", "levitico": "lv", "lv": "lv",
-        "numeros": "nm", "nm": "nm", "deuteronomio": "dt", "dt": "dt", "josue": "js", "js": "js",
-        "juizes": "jd", "jz": "jd", "rute": "rt", "rt": "rt", "1 samuel": "1sm", "1sm": "1sm",
-        "2 samuel": "2sm", "2sm": "2sm", "1 reis": "1kgs", "1rg": "1kgs", "2 reis": "2kgs", "2rg": "2kgs",
-        "1 cronicas": "1ch", "1cr": "1ch", "2 cronicas": "2ch", "2cr": "2ch", "esdras": "ezr", "ez": "ezr",
-        "neemias": "ne", "ne": "ne", "ester": "et", "et": "et", "jo": "job", "salmos": "ps", "salmo": "ps", "sl": "ps",
-        "proverbios": "prv", "pv": "prv", "eclesiastes": "ec", "ec": "ec", "cantares": "so", "ct": "so",
-        "isaias": "is", "is": "is", "jeremias": "jr", "jr": "jr", "lamentacoes": "lm", "lm": "lm",
-        "ezequiel": "ez", "eze": "ez", "daniel": "dn", "dn": "dn", "oseias": "ho", "os": "ho",
-        "joel": "jl", "jl": "jl", "amos": "am", "am": "am", "obadias": "ob", "ob": "ob",
-        "jonas": "jn", "jon": "jn", "miqueias": "mi", "mq": "mi", "naum": "na", "na": "na",
-        "habacuque": "hk", "hc": "hk", "sofonias": "zp", "sf": "zp", "ageu": "hg", "ag": "hg",
-        "zacarias": "zc", "zc": "zc", "malaquias": "ml", "ml": "ml", "mateus": "mt", "mt": "mt",
-        "marcos": "mk", "mc": "mk", "lucas": "lk", "lc": "lk", "joao": "jo", "atos": "act", "at": "act",
-        "romanos": "rm", "rm": "rm", "1 corintios": "1co", "1co": "1co", "2 corintios": "2co", "2co": "2co",
-        "galatas": "gl", "gl": "gl", "efesios": "eph", "ef": "eph", "filipenses": "ph", "fp": "ph",
-        "colossenses": "cl", "cl": "cl", "1 tessalonicenses": "1ts", "1ts": "1ts",
-        "2 tessalonicenses": "2ts", "2ts": "2ts", "1 timoteo": "1tm", "1tm": "1tm",
-        "2 timoteo": "2tm", "2tm": "2tm", "tito": "tt", "tt": "tt", "filemon": "phm", "fm": "phm",
-        "hebreus": "hb", "hb": "hb", "tiago": "jm", "tg": "jm", "1 pedro": "1pe", "1pe": "1pe",
-        "2 pedro": "2pe", "2pe": "2pe", "1 joao": "1jo", "1jo": "1jo", "2 joao": "2jo", "2jo": "2jo",
-        "3 joao": "3jo", "3jo": "3jo", "judas": "jud", "jd": "jud", "apocalipse": "re", "ap": "re"
+        "genesis": "GEN", "gn": "GEN", "exodo": "EXO", "ex": "EXO", "levitico": "LEV", "lv": "LEV",
+        "numeros": "NUM", "nm": "NUM", "deuteronomio": "DEU", "dt": "DEU", "josue": "JOS", "js": "JOS",
+        "juizes": "JDG", "jz": "JDG", "rute": "RUT", "rt": "RUT", "1 samuel": "1SA", "1sm": "1SA",
+        "2 samuel": "2SA", "2sm": "2SA", "1 reis": "1KI", "1rg": "1KI", "2 reis": "2KI", "2rg": "2KI",
+        "1 cronicas": "1CH", "1cr": "1CH", "2 cronicas": "2CH", "2cr": "2CH", "esdras": "EZR", "ez": "EZR",
+        "neemias": "NEH", "ne": "NEH", "ester": "EST", "et": "EST", "jo": "JOB", "salmos": "PSA", "salmo": "PSA", "sl": "PSA",
+        "proverbios": "PRO", "pv": "PRO", "eclesiastes": "ECC", "ec": "ECC", "cantares": "SNG", "ct": "SNG",
+        "isaias": "ISA", "is": "ISA", "jeremias": "JER", "jr": "JER", "lamentacoes": "LAM", "lm": "LAM",
+        "ezequiel": "EZK", "eze": "EZK", "daniel": "DAN", "dn": "DAN", "oseias": "HOS", "os": "HOS",
+        "joel": "JOL", "jl": "JOL", "amos": "AMO", "am": "AMO", "obadias": "OBA", "ob": "OBA",
+        "jonas": "JON", "jon": "JON", "miqueias": "MIC", "mq": "MIC", "naum": "NAM", "na": "NAM",
+        "habacuque": "HAB", "hc": "HAB", "sofonias": "ZEP", "sf": "ZEP", "ageu": "HAG", "ag": "HAG",
+        "zacarias": "ZEC", "zc": "ZEC", "malaquias": "MAL", "ml": "MAL", "mateus": "MAT", "mt": "MAT",
+        "marcos": "MRK", "mc": "MRK", "lucas": "LUK", "lc": "LUK", "joao": "JHN", "atos": "ACT", "at": "ACT",
+        "romanos": "ROM", "rm": "ROM", "1 corintios": "1CO", "1co": "1CO", "2 corintios": "2CO", "2co": "2CO",
+        "galatas": "GAL", "gl": "GAL", "efesios": "EPH", "ef": "EPH", "filipenses": "PHP", "fp": "PHP",
+        "colossenses": "COL", "cl": "COL", "1 tessalonicenses": "1TH", "1ts": "1TH",
+        "2 tessalonicenses": "2TH", "2ts": "2TH", "1 timoteo": "1TI", "1tm": "1TI",
+        "2 timoteo": "2TI", "2tm": "2TI", "tito": "TIT", "tt": "TIT", "filemon": "PHM", "fm": "PHM",
+        "hebreus": "HEB", "hb": "HEB", "tiago": "JAS", "tg": "JAS", "1 pedro": "1PE", "1pe": "1PE",
+        "2 pedro": "2PE", "2pe": "2PE", "1 joao": "1JN", "1jo": "1JN", "2 joao": "2JN", "2jo": "2JN",
+        "3 joao": "3JN", "3jo": "3JN", "judas": "JUD", "jd": "JUD", "apocalipse": "REV", "ap": "REV"
       };
 
 const bibleCache = new Map();
@@ -1061,47 +1066,49 @@ function parseBibleReference(ref, book) {
   };
 }
 
-async function fetchBibleBook(code) {
-  if (bibleCache.has(code)) return bibleCache.get(code);
-  const url = "https://raw.githubusercontent.com/MaatheusGois/bible/main/versions/pt-br/acf/" + code + "/" + code + ".json";
-  const response = await fetch(url, { cache: "force-cache" });
+async function fetchBiblePassage(url) {
+  if (bibleCache.has(url)) return bibleCache.get(url);
+  const response = await fetch(url, { cache: "force-cache", headers: { "api-key": BIBLE_API_KEY } });
   if (!response.ok) throw new Error("Falha ao carregar Biblia");
-  const book = await response.json();
-  bibleCache.set(code, book);
-  return book;
+  const passage = await response.json();
+  bibleCache.set(url, passage.data);
+  return passage.data;
+}
+
+function passageId(parsed) {
+  if (parsed.endChapter && !parsed.startVerse) {
+    return parsed.code + "." + parsed.chapter + "-" + parsed.code + "." + parsed.endChapter;
+  }
+  if (parsed.startVerse && parsed.endVerse) {
+    return parsed.code + "." + parsed.chapter + "." + parsed.startVerse + "-" + parsed.code + "." + parsed.chapter + "." + parsed.endVerse;
+  }
+  if (parsed.startVerse) {
+    return parsed.code + "." + parsed.chapter + "." + parsed.startVerse;
+  }
+  return parsed.code + "." + parsed.chapter;
+}
+
+function passageUrl(parsed) {
+  const params = new URLSearchParams({
+    "content-type": "html",
+    "include-notes": "false",
+    "include-titles": "false",
+    "include-chapter-numbers": "true",
+    "include-verse-numbers": "true",
+    "include-verse-spans": "false"
+  });
+  return BIBLE_API_BASE_URL + "/bibles/" + BIBLE_ID + "/passages/" + encodeURIComponent(passageId(parsed)) + "?" + params.toString();
 }
 
 async function renderBibleText(ref, book) {
   const parsed = parseBibleReference(ref, book);
   if (!parsed) throw new Error("Referencia invalida");
 
-  const bibleBook = await fetchBibleBook(parsed.code);
-  if (parsed.endChapter && !parsed.startVerse) {
-    const chapters = bibleBook.chapters.slice(parsed.chapter - 1, parsed.endChapter);
-    if (!chapters.length) throw new Error("Capitulo nao encontrado");
+  const passage = await fetchBiblePassage(passageUrl(parsed));
+  if (!passage || !passage.content) throw new Error("Texto nao encontrado");
 
-    return chapters
-      .map((chapter, chapterIndex) => {
-        const chapterNumber = parsed.chapter + chapterIndex;
-        return "<h4>Capitulo " + chapterNumber + "</h4>" + chapter
-          .map((text, verseIndex) => "<p><strong>" + chapterNumber + ":" + (verseIndex + 1) + "</strong> " + escapeText(text) + "</p>")
-          .join("");
-      })
-      .join("");
-  }
-
-  const chapter = bibleBook.chapters[parsed.chapter - 1];
-  if (!chapter) throw new Error("Capitulo nao encontrado");
-
-  const startV = parsed.startVerse || 1;
-  const endV = parsed.startVerse ? (parsed.endVerse || parsed.startVerse) : chapter.length;
-  
-  const verses = chapter.slice(startV - 1, endV);
-  if (!verses.length) throw new Error("Versiculo nao encontrado");
-
-  return verses
-    .map((text, index) => "<p><strong>" + (startV + index) + "</strong> " + escapeText(text) + "</p>")
-    .join("");
+  const copyright = passage.copyright ? "<p class=\\"bible-copyright\\">" + escapeText(passage.copyright) + "</p>" : "";
+  return "<div class=\\"bible-version\\">" + BIBLE_VERSION_LABEL + "</div>" + passage.content + copyright;
 }
 
 document.addEventListener("click", async (event) => {
